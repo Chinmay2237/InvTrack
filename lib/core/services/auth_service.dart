@@ -28,6 +28,20 @@ class AuthService with ChangeNotifier {
     }
   }
 
+  Future<void> createUserWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+    } on FirebaseAuthException {
+      rethrow;
+    }
+  }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }

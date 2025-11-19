@@ -74,6 +74,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () => context.go('/forgot-password'),
                   child: const Text('Forgot Password?'),
                 ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.go('/signup'),
+                  child: const Text("Don't have an account? Sign up"),
+                ),
               ],
             ),
           ),

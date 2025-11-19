@@ -5,6 +5,7 @@ import 'package:invtrack/app/widgets/sidebar.dart';
 import 'package:invtrack/core/services/auth_service.dart';
 import 'package:invtrack/features/authentication/screens/forgot_password_screen.dart';
 import 'package:invtrack/features/authentication/screens/login_screen.dart';
+import 'package:invtrack/features/authentication/screens/signup_screen.dart';
 import 'package:invtrack/features/dashboard/screens/dashboard_screen.dart';
 import 'package:invtrack/features/products/screens/add_product_page.dart';
 import 'package:invtrack/features/products/screens/edit_product_page.dart';
@@ -27,6 +28,10 @@ class AppRouter {
         GoRoute(
           path: '/login',
           builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/signup',
+          builder: (context, state) => const SignUpScreen(),
         ),
         GoRoute(
           path: '/forgot-password',
@@ -94,14 +99,15 @@ class AppRouter {
         final bool loggedIn = authService.isLoggedIn;
         final bool loggingIn = state.matchedLocation == '/login';
         final bool onForgotPassword = state.matchedLocation == '/forgot-password';
+        final bool onSignUp = state.matchedLocation == '/signup';
 
-        // If the user is not logged in and not on the login or forgot password page, redirect to login
-        if (!loggedIn && !loggingIn && !onForgotPassword) {
+        // If the user is not logged in and not on the login, forgot password, or sign up page, redirect to login
+        if (!loggedIn && !loggingIn && !onForgotPassword && !onSignUp) {
           return '/login';
         }
 
         // If the user is logged in and on the login page, redirect to the home page
-        if (loggedIn && loggingIn) {
+        if (loggedIn && (loggingIn || onSignUp)) {
           return '/';
         }
 
