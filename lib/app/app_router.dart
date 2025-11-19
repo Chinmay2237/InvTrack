@@ -22,7 +22,7 @@ class AppRouter {
 
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      initialLocation: '/',
+      initialLocation: '/', // Start at the root and let the redirect handle it
       refreshListenable: authService,
       routes: [
         GoRoute(
@@ -97,17 +97,20 @@ class AppRouter {
       ],
       redirect: (context, state) {
         final bool loggedIn = authService.isLoggedIn;
-        final bool loggingIn = state.matchedLocation == '/login';
-        final bool onForgotPassword = state.matchedLocation == '/forgot-password';
-        final bool onSignUp = state.matchedLocation == '/signup';
+        final String location = state.matchedLocation;
 
-        // If the user is not logged in and not on the login, forgot password, or sign up page, redirect to login
-        if (!loggedIn && !loggingIn && !onForgotPassword && !onSignUp) {
-          return '/login';
+        // Define authentication routes that unauthenticated users can access
+        final isAuthRoute =
+            location == '/login' || location == '/signup' || location == '/forgot-password';
+
+        // If the user is not logged in and not on an auth route, redirect to sign-up
+        if (!loggedIn && !isAuthRoute) {
+          return '/signup';
         }
 
-        // If the user is logged in and on the login page, redirect to the home page
-        if (loggedIn && (loggingIn || onSignUp)) {
+        // If the user is logged in and trying to access the login or sign-up page,
+        // redirect them to the home page.
+        if (loggedIn && (location == '/login' || location == '/signup')) {
           return '/';
         }
 
