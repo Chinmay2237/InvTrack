@@ -1,7 +1,5 @@
-
 import 'dart:developer' as developer;
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:invtrack/app/app_router.dart';
@@ -18,7 +16,7 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => AuthService(FirebaseAuth.instance)),
+          ChangeNotifierProvider(create: (_) => AuthService()),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ],
         child: const MyApp(),
@@ -75,6 +73,17 @@ class MyApp extends StatelessWidget {
       bodyMedium: GoogleFonts.openSans(fontSize: 14),
     );
 
+    final PageTransitionsTheme pageTransitionsTheme = PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: const FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.iOS: const FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.macOS: const FadeUpwardsPageTransitionsBuilder(),
+        TargetPlatform.windows: const ZoomPageTransitionsBuilder(),
+        TargetPlatform.linux: const ZoomPageTransitionsBuilder(),
+        TargetPlatform.fuchsia: const ZoomPageTransitionsBuilder(),
+      },
+    );
+
     final ThemeData lightTheme = ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
@@ -88,6 +97,7 @@ class MyApp extends StatelessWidget {
         titleTextStyle:
             GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.bold),
       ),
+      pageTransitionsTheme: pageTransitionsTheme, // Added pageTransitionsTheme
     );
 
     final ThemeData darkTheme = ThemeData(
@@ -103,6 +113,7 @@ class MyApp extends StatelessWidget {
         titleTextStyle:
             GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.bold),
       ),
+      pageTransitionsTheme: pageTransitionsTheme, // Added pageTransitionsTheme
     );
 
     return Consumer<ThemeProvider>(

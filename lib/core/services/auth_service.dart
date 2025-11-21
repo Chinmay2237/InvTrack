@@ -1,56 +1,55 @@
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+// Custom exception for authentication errors
+class AuthException implements Exception {
+  final String message;
+  AuthException(this.message);
+
+  @override
+  String toString() => 'AuthException: $message';
+}
 
 class AuthService with ChangeNotifier {
-  final FirebaseAuth _auth;
-  User? _user;
+  bool _isLoggedIn = false;
+  static const String _loggedInKey = 'isLoggedIn';
 
-  AuthService(this._auth) {
-    _auth.authStateChanges().listen((user) {
-      _user = user;
+  AuthService() {
+    _initAuthStatus();
+  }
+
+  Future<void> _initAuthStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    _isLoggedIn = prefs.getBool(_loggedInKey) ?? false;
+    notifyListeners();
+  }
+
+  bool get isLoggedIn => _isLoggedIn;
+
+  Future<void> signInWithUsernameAndPassword(String username, String password) async {
+    if (username == 'admin' && password == 'InvTrack@123') {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_loggedInKey, true);
+      _isLoggedIn = true;
       notifyListeners();
-    });
-  }
-
-  User? get user => _user;
-
-  bool get isLoggedIn => _user != null;
-
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
-
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
-    try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException {
-      // Handle login errors
-      rethrow; // Rethrow to be caught in the UI
-    }
-  }
-
-  Future<void> createUserWithEmailAndPassword({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } on FirebaseAuthException {
-      rethrow;
+      debugPrint('[InvTrack] User "admin" logged in.');
+    } else {
+      debugPrint('[InvTrack] Invalid login attempt for username: $username');
+      throw AuthException('Invalid credentials');
     }
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_loggedInKey);
+    _isLoggedIn = false;
+    notifyListeners();
+    debugPrint('[InvTrack] User logged out.');
   }
 
-  Future<void> sendPasswordResetEmail(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email);
-    } on FirebaseAuthException {
-      rethrow;
-    }
-  }
+  // Removed Firebase Auth specific methods:
+  // - createUserWithEmailAndPassword
+  // - sendPasswordResetEmail
+  // - authStateChanges stream
+  // - user getter
 }

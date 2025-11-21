@@ -1,17 +1,15 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:invtrack/app/widgets/sidebar.dart';
 import 'package:invtrack/core/services/auth_service.dart';
-import 'package:invtrack/features/authentication/screens/forgot_password_screen.dart';
 import 'package:invtrack/features/authentication/screens/login_screen.dart';
-import 'package:invtrack/features/authentication/screens/signup_screen.dart';
 import 'package:invtrack/features/dashboard/screens/dashboard_screen.dart';
 import 'package:invtrack/features/products/screens/add_product_page.dart';
 import 'package:invtrack/features/products/screens/edit_product_page.dart';
 import 'package:invtrack/features/products/screens/product_detail_page.dart';
 import 'package:invtrack/features/products/screens/product_list_page.dart';
 import 'package:provider/provider.dart';
+import 'package:invtrack/features/csv/screens/csv_import_page.dart'; // Import the CsvImportPage
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -28,14 +26,6 @@ class AppRouter {
         GoRoute(
           path: '/login',
           builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: '/signup',
-          builder: (context, state) => const SignUpScreen(),
-        ),
-        GoRoute(
-          path: '/forgot-password',
-          builder: (context, state) => const ForgotPasswordScreen(),
         ),
         ShellRoute(
           navigatorKey: _shellNavigatorKey,
@@ -73,6 +63,10 @@ class AppRouter {
                   const ProductListPage(category: 'Others'),
             ),
             GoRoute(
+              path: '/csv-import', // New route for CSV import
+              builder: (context, state) => const CsvImportPage(),
+            ),
+            GoRoute(
               path: '/:category/add',
               builder: (context, state) => AddProductPage(
                 category: state.pathParameters['category']!,
@@ -100,17 +94,16 @@ class AppRouter {
         final String location = state.matchedLocation;
 
         // Define authentication routes that unauthenticated users can access
-        final isAuthRoute =
-            location == '/login' || location == '/signup' || location == '/forgot-password';
+        final isAuthRoute = location == '/login';
 
-        // If the user is not logged in and not on an auth route, redirect to sign-up
+        // If the user is not logged in and not on an auth route, redirect to login
         if (!loggedIn && !isAuthRoute) {
-          return '/signup';
+          return '/login';
         }
 
-        // If the user is logged in and trying to access the login or sign-up page,
+        // If the user is logged in and trying to access the login page,
         // redirect them to the home page.
-        if (loggedIn && (location == '/login' || location == '/signup')) {
+        if (loggedIn && location == '/login') {
           return '/';
         }
 

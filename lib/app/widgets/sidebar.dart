@@ -43,6 +43,10 @@ class Sidebar extends StatelessWidget {
                     title: const Text('Others'),
                     onTap: () => context.go('/others'),
                   ),
+                  ListTile(
+                    title: const Text('CSV Import'),
+                    onTap: () => context.go('/csv-import'),
+                  ),
                   const Spacer(),
                   ListTile(
                     title: const Text('Logout'),

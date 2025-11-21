@@ -1,9 +1,13 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show Uint8List;
+import 'package:invtrack/core/models/history.dart'; // Import the History model
 import 'package:invtrack/features/products/models/product.dart';
 
 class FirestoreService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+  final CollectionReference _historyCollection = FirebaseFirestore.instance.collection('history'); // Added history collection reference
 
   // Get a stream of products for a specific category
   Stream<List<Product>> getProducts(String category) {
@@ -16,31 +20,85 @@ class FirestoreService {
             .toList());
   }
 
+  // Get all products
+  Future<List<Product>> getAllProducts() async {
+    final querySnapshot = await _db.collection('products').get();
+    return querySnapshot.docs
+        .map((doc) => Product.fromFirestore(doc))
+        .toList();
+  }
+
   // Get a single product by its ID
-  Future<Product> getProductById(String productId) {
-    return _db
-        .collection('products')
-        .doc(productId)
-        .get()
-        .then((doc) => Product.fromFirestore(doc));
+  Future<Product> getProductById(String productId) async {
+    final docSnapshot = await _db.collection('products').doc(productId).get();
+    if (docSnapshot.exists) {
+      return Product.fromFirestore(docSnapshot);
+    } else {
+      throw Exception('Product with ID $productId not found.');
+    }
   }
 
   // Add a new product
-  Future<void> addProduct(Product product) {
-    return _db.collection('products').add(product.toFirestore());
+  Future<void> addProduct(Product product) async {
+    final data = product.toFirestore();
+    data['createdAt'] = FieldValue.serverTimestamp();
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    data.remove('id'); 
+    final docRef = await _db.collection('products').add(data);
+
+    // Add history entry for product creation
+    final newProduct = product.copyWith(id: docRef.id); // Create a product with the generated ID for history
+    await addHistoryEntry(
+      History(
+        id: '', // Firestore will generate this
+        productId: docRef.id,
+        action: 'created',
+        timestamp: DateTime.now(), // Will be overwritten by FieldValue.serverTimestamp()
+        details: 'Product "${newProduct.name}" created.',
+      ),
+    );
   }
 
   // Update an existing product
-  Future<void> updateProduct(Product product) {
-    return _db
+  Future<void> updateProduct(Product product) async {
+    final data = product.toFirestore();
+    data['updatedAt'] = FieldValue.serverTimestamp();
+    data.remove('id'); 
+    await _db
         .collection('products')
         .doc(product.id)
-        .update(product.toFirestore());
+        .update(data);
+
+    // Add history entry for product update
+    await addHistoryEntry(
+      History(
+        id: '', // Firestore will generate this
+        productId: product.id,
+        action: 'updated',
+        timestamp: DateTime.now(), // Will be overwritten by FieldValue.serverTimestamp()
+        details: 'Product "${product.name}" updated.',
+      ),
+    );
   }
 
   // Delete a product
   Future<void> deleteProduct(String productId) {
     return _db.collection('products').doc(productId).delete();
+  }
+
+  // Upload product image to Firebase Storage
+  Future<String?> uploadProductImage(
+      String productId, Uint8List imageData, String imageName) async {
+    try {
+      final ref = _storage.ref().child('products/$productId/$imageName');
+      final uploadTask = ref.putData(imageData);
+      final snapshot = await uploadTask.whenComplete(() => {});
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
   }
 
   // Get a stream of category counts
@@ -55,5 +113,24 @@ class FirestoreService {
       }
       return counts;
     });
+  }
+
+  // Add a new history entry
+  Future<void> addHistoryEntry(History history) async {
+    final data = history.toFirestore();
+    data['timestamp'] = FieldValue.serverTimestamp(); // Ensure timestamp is set on creation
+    data.remove('id'); // Firestore will generate the ID
+    await _historyCollection.add(data);
+  }
+
+  // Retrieve history entries for a specific product, ordered by timestamp
+  Stream<List<History>> getProductHistory(String productId) {
+    return _historyCollection
+        .where('productId', isEqualTo: productId)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => History.fromFirestore(doc))
+            .toList());
   }
 }
