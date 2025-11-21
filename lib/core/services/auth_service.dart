@@ -3,10 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthService with ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth;
   User? _user;
 
-  AuthService() {
+  AuthService(this._auth) {
     _auth.authStateChanges().listen((user) {
       _user = user;
       notifyListeners();

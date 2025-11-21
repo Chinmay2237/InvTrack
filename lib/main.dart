@@ -1,6 +1,7 @@
 
 import 'dart:developer' as developer;
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:invtrack/app/app_router.dart';
@@ -17,7 +18,7 @@ void main() async {
     runApp(
       MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (_) => AuthService()),
+          ChangeNotifierProvider(create: (_) => AuthService(FirebaseAuth.instance)),
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ],
         child: const MyApp(),
@@ -95,7 +96,7 @@ class MyApp extends StatelessWidget {
         seedColor: primarySeedColor,
         brightness: Brightness.dark,
       ),
-      textTheme: appTextTheme,.
+      textTheme: appTextTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.grey[900],
         foregroundColor: Colors.white,
