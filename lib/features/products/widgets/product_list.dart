@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:invtrack/core/services/firestore_service.dart';
 import 'package:invtrack/features/products/models/product.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart'; // Added for date formatting
 
 class ProductList extends StatefulWidget {
-  final String category;
-  const ProductList({super.key, required this.category});
+  const ProductList({super.key});
 
   @override
   State<ProductList> createState() => _ProductListState();
@@ -17,10 +15,14 @@ class _ProductListState extends State<ProductList> {
   final TextEditingController _searchController = TextEditingController();
   List<Product> _allProducts = [];
   List<Product> _filteredProducts = [];
+  Stream<List<Product>>? _productsStream;
 
   @override
   void initState() {
     super.initState();
+    final firestoreService =
+        Provider.of<FirestoreService>(context, listen: false);
+    _productsStream = firestoreService.getProductsStream();
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -36,115 +38,48 @@ class _ProductListState extends State<ProductList> {
   }
 
   void _filterProducts(String query) {
-    if (query.isEmpty) {
-      setState(() {
-        _filteredProducts = _allProducts;
-      });
-      return;
-    }
-
     final lowerCaseQuery = query.toLowerCase();
     setState(() {
       _filteredProducts = _allProducts.where((product) {
-        final nameMatches = product.name.toLowerCase().contains(lowerCaseQuery);
-        final serialNumberMatches = product.serialNumber.toLowerCase().contains(lowerCaseQuery);
-        final assignedToMatches = product.assignedTo.toLowerCase().contains(lowerCaseQuery);
-        return nameMatches || serialNumberMatches || assignedToMatches;
+        return product.name.toLowerCase().contains(lowerCaseQuery) ||
+            product.serialNumber.toLowerCase().contains(lowerCaseQuery) ||
+            (product.assignedTo.toLowerCase().contains(lowerCaseQuery));
       }).toList();
     });
   }
 
-  Future<void> _deleteProduct(BuildContext context, String productId) async {
-    final firestoreService = Provider.of<FirestoreService>(context, listen: false);
-    bool confirmDelete = await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this product?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmDelete) {
-      try {
-        await firestoreService.deleteProduct(productId);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Product deleted successfully!')),
-        );
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to delete product: $e')),
-        );
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final firestoreService = Provider.of<FirestoreService>(context);
-
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: _searchController,
-            decoration: InputDecoration(
-              labelText: 'Search by Name, Serial, or Assigned To',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
+        _buildSearchBar(),
         Expanded(
           child: StreamBuilder<List<Product>>(
-            stream: firestoreService.getProducts(widget.category),
+            stream: _productsStream,
             builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              }
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
-
-              _allProducts = snapshot.data ?? [];
-              _filterProducts(_searchController.text); // Re-filter when data changes
-
-              if (_filteredProducts.isEmpty) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
+              if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: Text('No products found.'));
               }
 
-              return SingleChildScrollView(
-                child: PaginatedDataTable(
-                  header: Text('${widget.category} Inventory'),
-                  rowsPerPage: 10,
-                  columns: const [
-                    DataColumn(label: Text('Name')),
-                    DataColumn(label: Text('Serial Number')),
-                    DataColumn(label: Text('Assigned To')),
-                    DataColumn(label: Text('Category')),
-                    DataColumn(label: Text('Cost')),
-                    DataColumn(label: Text('Created At')),
-                    DataColumn(label: Text('Actions')),
-                  ],
-                  source: _ProductDataSource(
-                    _filteredProducts,
-                    context,
-                    widget.category,
-                    _deleteProduct,
-                  ),
-                ),
+              _allProducts = snapshot.data!;
+              if (_searchController.text.isNotEmpty) {
+                _filterProducts(_searchController.text);
+              } else {
+                _filteredProducts = _allProducts;
+              }
+
+              return ListView.builder(
+                itemCount: _filteredProducts.length,
+                itemBuilder: (context, index) {
+                  final product = _filteredProducts[index];
+                  return _ProductCard(product: product);
+                },
               );
             },
           ),
@@ -152,65 +87,119 @@ class _ProductListState extends State<ProductList> {
       ],
     );
   }
-}
 
-class _ProductDataSource extends DataTableSource {
-  final List<Product> products;
-  final BuildContext context;
-  final String category;
-  final Function(BuildContext, String) onDelete;
-
-  _ProductDataSource(this.products, this.context, this.category, this.onDelete);
-
-  @override
-  DataRow? getRow(int index) {
-    if (index >= products.length) {
-      return null;
-    }
-    final product = products[index];
-    final dateFormat = DateFormat('yyyy-MM-dd HH:mm'); // Date formatter
-
-    return DataRow(
-      onSelectChanged: (selected) {
-        if (selected ?? false) {
-          context.go('/$category/details/${product.id}');
-        }
-      },
-      cells: [
-        DataCell(Text(product.name)),
-        DataCell(Text(product.serialNumber)),
-        DataCell(Text(product.assignedTo)),
-        DataCell(Text(product.category)),
-        DataCell(Text('\$${product.cost.toStringAsFixed(2)}')),
-        DataCell(Text(product.createdAt != null ? dateFormat.format(product.createdAt!) : 'N/A')), // Formatted date
-        DataCell(
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.edit, size: 20),
-                onPressed: () {
-                  context.go('/$category/edit/${product.id}');
-                },
-                tooltip: 'Edit Product',
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete, size: 20, color: Colors.red),
-                onPressed: () => onDelete(context, product.id),
-                tooltip: 'Delete Product',
-              ),
-            ],
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: TextField(
+          controller: _searchController,
+          decoration: const InputDecoration(
+            labelText: 'Search products...',
+            prefixIcon: Icon(Icons.search),
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           ),
         ),
-      ],
+      ),
     );
+  }
+}
+
+class _ProductCard extends StatelessWidget {
+  const _ProductCard({required this.product});
+
+  final Product product;
+
+  Future<void> _deleteProduct(BuildContext context) async {
+    final firestoreService =
+        Provider.of<FirestoreService>(context, listen: false);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirm Delete'),
+        content: const Text('Are you sure you want to delete this product?'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete')),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await firestoreService.deleteProduct(product.id);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Product deleted')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error deleting product: $e')),
+          );
+        }
+      }
+    }
   }
 
   @override
-  bool get isRowCountApproximate => false;
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final subtitleStyle = theme.textTheme.bodySmall
+        ?.copyWith(color: theme.colorScheme.onSurfaceVariant);
 
-  @override
-  int get rowCount => products.length;
-
-  @override
-  int get selectedRowCount => 0;
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        onTap: () => context.go('/products/${product.id}'),
+        leading: Hero(
+          tag: 'product-image-${product.id}',
+          child: CircleAvatar(
+            radius: 30,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
+            backgroundImage: product.imageUrl.isNotEmpty
+                ? NetworkImage(product.imageUrl)
+                : null,
+            child: product.imageUrl.isEmpty
+                ? const Icon(Icons.inventory_2_outlined, size: 30)
+                : null,
+          ),
+        ),
+        title: Text(product.name, style: theme.textTheme.titleMedium),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('S/N: ${product.serialNumber}', style: subtitleStyle),
+            if (product.assignedTo.isNotEmpty)
+              Text('Assigned: ${product.assignedTo}', style: subtitleStyle),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit',
+              onPressed: () => context.go('/products/${product.id}/edit'),
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+              tooltip: 'Delete',
+              onPressed: () => _deleteProduct(context),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -4,7 +4,6 @@ import 'package:invtrack/core/services/auth_service.dart';
 import 'package:invtrack/core/services/firestore_service.dart'; // Import FirestoreService
 import 'package:provider/provider.dart';
 import 'package:csv/csv.dart'; // Import csv package
-import 'dart:html' as html; // Import dart:html for web download functionality
 import 'package:invtrack/features/products/models/product.dart'; // Import Product model
 
 class DashboardScreen extends StatelessWidget {
@@ -21,6 +20,7 @@ class DashboardScreen extends StatelessWidget {
       'serialNumber',
       'category',
       'cost',
+      'price',
       'assignedTo',
       'notes',
       'imageUrl',
@@ -36,6 +36,7 @@ class DashboardScreen extends StatelessWidget {
         product.serialNumber,
         product.category,
         product.cost,
+        product.price,
         product.assignedTo,
         product.notes,
         product.imageUrl,
@@ -48,32 +49,33 @@ class DashboardScreen extends StatelessWidget {
   }
 
   Future<void> _exportProductsToCsv(BuildContext context) async {
-    final firestoreService = Provider.of<FirestoreService>(context, listen: false);
+    final firestoreService =
+        Provider.of<FirestoreService>(context, listen: false);
     try {
       final products = await firestoreService.getAllProducts();
       if (products.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No products to export.')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No products to export.')),
+          );
+        }
         return;
       }
       final csvContent = _convertProductsToCsv(products);
 
-      // Create a Blob from the CSV content
-      final blob = html.Blob([csvContent]);
-      final url = html.Url.createObjectUrlFromBlob(blob);
-      final anchor = html.AnchorElement(href: url)
-        ..setAttribute("download", "invtrack_products.csv")
-        ..click();
-      html.Url.revokeObjectUrl(url);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Products exported successfully!')),
-      );
+      // This is a placeholder for web download functionality.
+      // You would use a package like `universal_html` to create a download link.
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('CSV export is not implemented yet.')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to export products: $e')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to export products: $e')),
+        );
+      }
     }
   }
 
@@ -102,7 +104,9 @@ class DashboardScreen extends StatelessWidget {
             tooltip: 'Logout',
             onPressed: () async {
               await authService.signOut();
-              GoRouter.of(context).go('/login');
+              if (context.mounted) {
+                GoRouter.of(context).go('/login');
+              }
             },
           ),
         ],
@@ -146,7 +150,10 @@ class DashboardScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       Text(
                         cardData['count']!,
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall
+                            ?.copyWith(
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.secondary,
                             ),

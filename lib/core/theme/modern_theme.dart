@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,29 +23,29 @@ class ModernTheme {
         ),
       ),
       textTheme: TextTheme(
-        headline1: GoogleFonts.poppins(
+        displayLarge: GoogleFonts.poppins(
           color: textColor,
           fontSize: 32,
           fontWeight: FontWeight.bold,
         ),
-        headline2: GoogleFonts.poppins(
+        displayMedium: GoogleFonts.poppins(
           color: textColor,
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
-        bodyText1: GoogleFonts.poppins(
+        bodyLarge: GoogleFonts.poppins(
           color: textColor,
           fontSize: 16,
         ),
-        bodyText2: GoogleFonts.poppins(
+        bodyMedium: GoogleFonts.poppins(
           color: Colors.grey[600],
           fontSize: 14,
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          primary: primaryColor,
-          onPrimary: Colors.white,
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -68,7 +67,7 @@ class ModernTheme {
           color: Colors.grey[500],
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 4,
         shadowColor: Colors.grey.withOpacity(0.2),
         shape: RoundedRectangleBorder(

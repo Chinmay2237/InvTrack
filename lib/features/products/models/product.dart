@@ -6,6 +6,7 @@ class Product {
   final String serialNumber;
   final String category;
   final double cost;
+  final double price;
   final String assignedTo;
   final String notes;
   final String imageUrl; // Optional
@@ -18,6 +19,7 @@ class Product {
     required this.serialNumber,
     required this.category,
     required this.cost,
+    required this.price,
     required this.assignedTo,
     required this.notes,
     this.imageUrl = '', // Default to empty string if not provided
@@ -33,11 +35,14 @@ class Product {
       serialNumber: data['serialNumber'] ?? '',
       category: data['category'] ?? '',
       cost: (data['cost'] ?? 0.0).toDouble(),
+      price: (data['price'] ?? 0.0).toDouble(),
       assignedTo: data['assignedTo'] ?? '',
       notes: data['notes'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp?)?.toDate(), // Safely parse nullable Timestamp
-      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(), // Safely parse nullable Timestamp
+      createdAt: (data['createdAt'] as Timestamp?)
+          ?.toDate(), // Safely parse nullable Timestamp
+      updatedAt: (data['updatedAt'] as Timestamp?)
+          ?.toDate(), // Safely parse nullable Timestamp
     );
   }
 
@@ -48,6 +53,7 @@ class Product {
       'serialNumber': serialNumber,
       'category': category,
       'cost': cost,
+      'price': price,
       'assignedTo': assignedTo,
       'notes': notes,
       'imageUrl': imageUrl,
@@ -63,6 +69,7 @@ class Product {
       'serialNumber': serialNumber,
       'category': category,
       'cost': cost,
+      'price': price,
       'assignedTo': assignedTo,
       'notes': notes,
       'imageUrl': imageUrl,
@@ -76,6 +83,7 @@ class Product {
     String? serialNumber,
     String? category,
     double? cost,
+    double? price,
     String? assignedTo,
     String? notes,
     String? imageUrl,
@@ -88,6 +96,7 @@ class Product {
       serialNumber: serialNumber ?? this.serialNumber,
       category: category ?? this.category,
       cost: cost ?? this.cost,
+      price: price ?? this.price,
       assignedTo: assignedTo ?? this.assignedTo,
       notes: notes ?? this.notes,
       imageUrl: imageUrl ?? this.imageUrl,

@@ -38,53 +38,28 @@ class AppRouter {
               builder: (context, state) => const DashboardScreen(),
             ),
             GoRoute(
-              path: '/laptops',
-              builder: (context, state) =>
-                  const ProductListPage(category: 'Laptops'),
+              path: '/products',
+              builder: (context, state) => const ProductListPage(),
             ),
             GoRoute(
-              path: '/mobiles',
-              builder: (context, state) =>
-                  const ProductListPage(category: 'Mobiles'),
+              path: '/products/add',
+              builder: (context, state) => const AddProductPage(),
             ),
             GoRoute(
-              path: '/accessories',
-              builder: (context, state) =>
-                  const ProductListPage(category: 'Accessories'),
+              path: '/products/:id/edit',
+              builder: (context, state) => EditProductPage(
+                productId: state.pathParameters['id']!,
+              ),
             ),
             GoRoute(
-              path: '/furniture',
-              builder: (context, state) =>
-                  const ProductListPage(category: 'Furniture'),
-            ),
-            GoRoute(
-              path: '/others',
-              builder: (context, state) =>
-                  const ProductListPage(category: 'Others'),
+              path: '/products/:id',
+              builder: (context, state) => ProductDetailPage(
+                productId: state.pathParameters['id']!,
+              ),
             ),
             GoRoute(
               path: '/csv-import', // New route for CSV import
               builder: (context, state) => const CsvImportPage(),
-            ),
-            GoRoute(
-              path: '/:category/add',
-              builder: (context, state) => AddProductPage(
-                category: state.pathParameters['category']!,
-              ),
-            ),
-            GoRoute(
-              path: '/:category/edit/:id',
-              builder: (context, state) => EditProductPage(
-                category: state.pathParameters['category']!,
-                productId: state.pathParameters['id']!,
-              ),
-            ),
-            GoRoute(
-              path: '/:category/details/:id',
-              builder: (context, state) => ProductDetailPage(
-                category: state.pathParameters['category']!,
-                productId: state.pathParameters['id']!,
-              ),
             ),
           ],
         ),

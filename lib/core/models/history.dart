@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class History {
@@ -31,7 +30,8 @@ class History {
     return {
       'productId': productId,
       'action': action,
-      'timestamp': FieldValue.serverTimestamp(), // Set server timestamp on creation
+      'timestamp':
+          FieldValue.serverTimestamp(), // Set server timestamp on creation
       'details': details,
     };
   }

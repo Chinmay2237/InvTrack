@@ -11,7 +11,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -35,7 +36,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         }
       });
     _usernameShakeAnimation = Tween(begin: 0.0, end: 10.0).animate(
-      CurvedAnimation(parent: _usernameShakeController, curve: Curves.elasticOut),
+      CurvedAnimation(
+          parent: _usernameShakeController, curve: Curves.elasticOut),
     );
 
     _passwordShakeController = AnimationController(
@@ -47,7 +49,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         }
       });
     _passwordShakeAnimation = Tween(begin: 0.0, end: 10.0).animate(
-      CurvedAnimation(parent: _passwordShakeController, curve: Curves.elasticOut),
+      CurvedAnimation(
+          parent: _passwordShakeController, curve: Curves.elasticOut),
     );
   }
 
@@ -132,7 +135,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     animation: _usernameShakeAnimation,
                     builder: (context, child) {
                       return Transform.translate(
-                        offset: Offset(sin(_usernameShakeAnimation.value * pi * 2) * 2, 0),
+                        offset: Offset(
+                            sin(_usernameShakeAnimation.value * pi * 2) * 2, 0),
                         child: child,
                       );
                     },
@@ -156,7 +160,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                     animation: _passwordShakeAnimation,
                     builder: (context, child) {
                       return Transform.translate(
-                        offset: Offset(sin(_passwordShakeAnimation.value * pi * 2) * 2, 0),
+                        offset: Offset(
+                            sin(_passwordShakeAnimation.value * pi * 2) * 2, 0),
                         child: child,
                       );
                     },
@@ -190,7 +195,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                       ),
                       child: Text(
                         'Login',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(
                               color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                             ),

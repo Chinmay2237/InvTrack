@@ -35,11 +35,11 @@ class Sidebar extends StatelessWidget {
                     title: const Text('Accessories'),
                     onTap: () => context.go('/accessories'),
                   ),
-                   ListTile(
+                  ListTile(
                     title: const Text('Furniture'),
                     onTap: () => context.go('/furniture'),
                   ),
-                   ListTile(
+                  ListTile(
                     title: const Text('Others'),
                     onTap: () => context.go('/others'),
                   ),

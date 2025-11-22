@@ -26,7 +26,8 @@ class AuthService with ChangeNotifier {
 
   bool get isLoggedIn => _isLoggedIn;
 
-  Future<void> signInWithUsernameAndPassword(String username, String password) async {
+  Future<void> signInWithUsernameAndPassword(
+      String username, String password) async {
     if (username == 'admin' && password == 'InvTrack@123') {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_loggedInKey, true);

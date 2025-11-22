@@ -23,9 +23,11 @@ class _CsvImportPageState extends State<CsvImportPage> {
   String _fileName = 'No file selected';
   bool _isLoading = false;
 
-  final DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm'); // Date formatter for display
+  final DateFormat _dateFormat =
+      DateFormat('yyyy-MM-dd HH:mm'); // Date formatter for display
 
-  void _showSnackBar(BuildContext context, String message, {Color color = Colors.green}) {
+  void _showSnackBar(BuildContext context, String message,
+      {Color color = Colors.green}) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -67,12 +69,16 @@ class _CsvImportPageState extends State<CsvImportPage> {
           _showSnackBar(context, 'CSV file is empty.', color: Colors.red);
         }
       } else {
-        developer.log('[InvTrack] CSV file picking cancelled or no file selected.');
-        _showSnackBar(context, 'File picking cancelled or no file selected.', color: Colors.orange);
+        developer
+            .log('[InvTrack] CSV file picking cancelled or no file selected.');
+        _showSnackBar(context, 'File picking cancelled or no file selected.',
+            color: Colors.orange);
       }
     } catch (e, s) {
-      developer.log('[InvTrack] Error picking or parsing CSV file', error: e, stackTrace: s);
-      _showSnackBar(context, 'Error picking or parsing CSV file: $e', color: Colors.red);
+      developer.log('[InvTrack] Error picking or parsing CSV file',
+          error: e, stackTrace: s);
+      _showSnackBar(context, 'Error picking or parsing CSV file: $e',
+          color: Colors.red);
     } finally {
       setState(() {
         _isLoading = false;
@@ -91,7 +97,8 @@ class _CsvImportPageState extends State<CsvImportPage> {
     });
     developer.log('[InvTrack] CSV import started.');
 
-    final firestoreService = Provider.of<FirestoreService>(context, listen: false);
+    final firestoreService =
+        Provider.of<FirestoreService>(context, listen: false);
     int importedCount = 0;
     int errorCount = 0;
 
@@ -105,12 +112,18 @@ class _CsvImportPageState extends State<CsvImportPage> {
       }
 
       try {
-        final String name = productData['name']?.toString() ?? 'Unnamed Product';
-        final String serialNumber = productData['serialNumber']?.toString() ?? '';
+        final String name =
+            productData['name']?.toString() ?? 'Unnamed Product';
+        final String serialNumber =
+            productData['serialNumber']?.toString() ?? '';
         final String category = productData['category']?.toString() ?? 'Others';
         // Safely parse cost, defaulting to 0.0
-        final double cost = double.tryParse(productData['cost']?.toString() ?? '') ?? 0.0;
-        final String assignedTo = productData['assignedTo']?.toString() ?? 'Unassigned';
+        final double cost =
+            double.tryParse(productData['cost']?.toString() ?? '') ?? 0.0;
+        final double price =
+            double.tryParse(productData['price']?.toString() ?? '') ?? 0.0;
+        final String assignedTo =
+            productData['assignedTo']?.toString() ?? 'Unassigned';
         final String notes = productData['notes']?.toString() ?? '';
         String? imageUrl = productData['imageUrl']?.toString();
         if (imageUrl != null && imageUrl.isEmpty) {
@@ -123,7 +136,9 @@ class _CsvImportPageState extends State<CsvImportPage> {
           try {
             createdAt = DateTime.parse(createdAtString);
           } catch (e) {
-            developer.log('[InvTrack] Could not parse createdAt for row ${i + 1}: $createdAtString', error: e);
+            developer.log(
+                '[InvTrack] Could not parse createdAt for row ${i + 1}: $createdAtString',
+                error: e);
           }
         }
 
@@ -133,7 +148,9 @@ class _CsvImportPageState extends State<CsvImportPage> {
           try {
             updatedAt = DateTime.parse(updatedAtString);
           } catch (e) {
-            developer.log('[InvTrack] Could not parse updatedAt for row ${i + 1}: $updatedAtString', error: e);
+            developer.log(
+                '[InvTrack] Could not parse updatedAt for row ${i + 1}: $updatedAtString',
+                error: e);
           }
         }
 
@@ -143,9 +160,10 @@ class _CsvImportPageState extends State<CsvImportPage> {
           serialNumber: serialNumber,
           category: category,
           cost: cost,
+          price: price,
           assignedTo: assignedTo,
           notes: notes,
-          imageUrl: imageUrl!, // Can be null
+          imageUrl: imageUrl ?? '', // Can be null
           createdAt: createdAt, // Can be null
           updatedAt: updatedAt, // Can be null
         );
@@ -153,7 +171,8 @@ class _CsvImportPageState extends State<CsvImportPage> {
         importedCount++;
       } catch (e, s) {
         errorCount++;
-        developer.log('[InvTrack] Error importing row ${i + 1}: $e', error: e, stackTrace: s);
+        developer.log('[InvTrack] Error importing row ${i + 1}: $e',
+            error: e, stackTrace: s);
       }
     }
 
@@ -163,10 +182,14 @@ class _CsvImportPageState extends State<CsvImportPage> {
 
     if (errorCount == 0) {
       _showSnackBar(context, 'Successfully imported $importedCount products!');
-      developer.log('[InvTrack] CSV import finished. $importedCount products imported.');
+      developer.log(
+          '[InvTrack] CSV import finished. $importedCount products imported.');
     } else {
-      _showSnackBar(context, 'Import finished with $importedCount successes and $errorCount errors.', color: Colors.orange);
-      developer.log('[InvTrack] CSV import finished with $importedCount successes and $errorCount errors.');
+      _showSnackBar(context,
+          'Import finished with $importedCount successes and $errorCount errors.',
+          color: Colors.orange);
+      developer.log(
+          '[InvTrack] CSV import finished with $importedCount successes and $errorCount errors.');
     }
   }
 
@@ -223,41 +246,49 @@ class _CsvImportPageState extends State<CsvImportPage> {
                             .map((header) => DataColumn(
                                   label: Text(
                                     header,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ))
                             .toList(),
-                        rows: _csvData.take(10).map((row) { // Show first 10 rows as preview
+                        rows: _csvData.take(10).map((row) {
+                          // Show first 10 rows as preview
                           // Create a map for easier access to data by header name
                           Map<String, dynamic> rowData = {};
-                          for(int k=0; k<_csvHeaders.length && k<row.length; k++) {
+                          for (int k = 0;
+                              k < _csvHeaders.length && k < row.length;
+                              k++) {
                             rowData[_csvHeaders[k]] = row[k];
                           }
 
                           return DataRow(
                             cells: _csvHeaders.map((header) {
-                                String cellValue = rowData[header]?.toString() ?? '';
-                                // Special handling for date fields in preview
-                                if (header == 'createdAt' || header == 'updatedAt') {
-                                  try {
-                                    if (cellValue.isNotEmpty) {
-                                      DateTime parsedDate = DateTime.parse(cellValue);
-                                      cellValue = _dateFormat.format(parsedDate);
-                                    } else {
-                                      cellValue = 'N/A';
-                                    }
-                                  } catch (e) {
-                                    cellValue = 'Invalid Date'; // Indicate parsing error in preview
+                              String cellValue =
+                                  rowData[header]?.toString() ?? '';
+                              // Special handling for date fields in preview
+                              if (header == 'createdAt' ||
+                                  header == 'updatedAt') {
+                                try {
+                                  if (cellValue.isNotEmpty) {
+                                    DateTime parsedDate =
+                                        DateTime.parse(cellValue);
+                                    cellValue = _dateFormat.format(parsedDate);
+                                  } else {
+                                    cellValue = 'N/A';
                                   }
+                                } catch (e) {
+                                  cellValue =
+                                      'Invalid Date'; // Indicate parsing error in preview
                                 }
-                                return DataCell(
-                                      Text(
-                                        cellValue,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    );
-                                  }).toList(),
+                              }
+                              return DataCell(
+                                Text(
+                                  cellValue,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              );
+                            }).toList(),
                           );
                         }).toList(),
                       ),
