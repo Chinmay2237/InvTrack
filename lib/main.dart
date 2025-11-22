@@ -1,61 +1,22 @@
-import 'dart:developer' as developer;
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:invtrack/app/app_router.dart';
 import 'package:invtrack/core/services/auth_service.dart';
-import 'package:invtrack/firebase_options.dart';
+import 'package:invtrack/core/theme/modern_theme.dart';
+import 'package:invtrack/features/authentication/screens/login_screen.dart';
+import 'package:invtrack/features/home/screens/home_page.dart';
 import 'package:provider/provider.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => AuthService()),
-          ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ],
-        child: const MyApp(),
-      ),
-    );
-  } catch (e, s) {
-    developer.log(
-      'Error initializing Firebase',
-      name: 'myapp.main',
-      error: e,
-      stackTrace: s,
-    );
-    runApp(MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Failed to initialize Firebase. Please check the browser console for detailed errors.\n\nError: $e',
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red, fontSize: 16),
-            ),
-          ),
-        ),
-      ),
-    ));
-  }
-}
-
-class ThemeProvider with ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
-
-  ThemeMode get themeMode => _themeMode;
-
-  void toggleTheme() {
-    _themeMode =
-        _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
-  }
+void main() {
+  final authService = AuthService();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        Provider.value(value: authService),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -63,69 +24,73 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = AppRouter.getRouter(context);
-    const Color primarySeedColor = Colors.deepPurple;
-
-    final TextTheme appTextTheme = TextTheme(
-      displayLarge:
-          GoogleFonts.oswald(fontSize: 57, fontWeight: FontWeight.bold),
-      titleLarge: GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w500),
-      bodyMedium: GoogleFonts.openSans(fontSize: 14),
-    );
-
-    final PageTransitionsTheme pageTransitionsTheme = PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: const FadeUpwardsPageTransitionsBuilder(),
-        TargetPlatform.iOS: const FadeUpwardsPageTransitionsBuilder(),
-        TargetPlatform.macOS: const FadeUpwardsPageTransitionsBuilder(),
-        TargetPlatform.windows: const ZoomPageTransitionsBuilder(),
-        TargetPlatform.linux: const ZoomPageTransitionsBuilder(),
-        TargetPlatform.fuchsia: const ZoomPageTransitionsBuilder(),
-      },
-    );
-
-    final ThemeData lightTheme = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primarySeedColor,
-        brightness: Brightness.light,
-      ),
-      textTheme: appTextTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: primarySeedColor,
-        foregroundColor: Colors.white,
-        titleTextStyle:
-            GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-      pageTransitionsTheme: pageTransitionsTheme, // Added pageTransitionsTheme
-    );
-
-    final ThemeData darkTheme = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primarySeedColor,
-        brightness: Brightness.dark,
-      ),
-      textTheme: appTextTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.grey[900],
-        foregroundColor: Colors.white,
-        titleTextStyle:
-            GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-      pageTransitionsTheme: pageTransitionsTheme, // Added pageTransitionsTheme
-    );
-
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        return MaterialApp.router(
+        return MaterialApp(
           title: 'InvTrack',
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          themeMode: themeProvider.themeMode,
-          routerConfig: router,
+          theme: themeProvider.themeData,
+          debugShowCheckedModeBanner: false,
+          home: const SplashScreen(), // Start with the splash screen
+          routes: {
+            '/login': (context) => const LoginScreen(),
+            '/home': (context) => const HomePage(),
+          },
         );
       },
+    );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _navigateToNextScreen();
+  }
+
+  void _navigateToNextScreen() async {
+    await Future.delayed(const Duration(seconds: 3)); // Simulate loading
+    if (mounted) {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      if (authService.currentUser != null) {
+        Navigator.of(context).pushReplacementNamed('/home');
+      } else {
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: ModernTheme.primaryColor,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.inventory_2, color: Colors.white, size: 100),
+            const SizedBox(height: 20),
+            Text(
+              'InvTrack',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline1
+                  ?.copyWith(color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

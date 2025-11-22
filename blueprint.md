@@ -56,20 +56,72 @@ InvTrack is a clean, simple, and modern Flutter Web application designed for eff
 *   **Firebase Storage:** Used for storing all product images uploaded by users.
 *   **Optional Cloud Function:** (Future consideration) To automatically create history log entries upon product updates or assignments.
 
-## 5. UI Screens
+## 5. UI/UX Modernization Plan
 
-*   **Login Screen:** Static username/password authentication.
-*   **Dashboard:** Overview of inventory metrics.
-*   **Category List Pages:** (e.g., `/laptops`, `/mobiles`, `/accessories`, `/furniture`, `/others`)
-    *   Display product lists specific to the category.
-*   **Add Product Pages:** (e.g., `/laptops/add`, `/mobiles/add`)
-    *   Forms for adding new products to a specific category.
-*   **Edit Product Pages:** (e.g., `/laptops/edit/:id`, `/mobiles/edit/:id`)
-    *   Forms for editing existing products within a category.
-*   **Product Detail Pages:** (e.g., `/laptops/:id`, `/mobiles/:id`)
-    *   Detailed view of a single product.
-*   **CSV Import Page:** Interface for uploading CSV files.
-*   **Settings (optional):** Placeholder for future app settings.
+This section outlines the plan to refactor and modernize the UI/UX of the InvTrack application, adhering to the user's request.
+
+### 5.1. Folder Structure Refactoring
+
+- **Goal:** Improve organization and separation of concerns.
+- **Actions:**
+    - Consolidate UI-related files into a more intuitive structure.
+    - `lib/features/{feature}/screens` will be moved to `lib/ui/screens/{feature}`.
+    - `lib/features/{feature}/widgets` will be moved to `lib/ui/widgets/{feature}`.
+    - Create `lib/ui/widgets/common` for highly reusable components (e.g., `PrimaryButton`, `AppTextField`).
+    - Create `lib/ui/widgets/layout` for structural elements like `AppScaffold`, `Sidebar`, and `TopAppBar`.
+
+### 5.2. Theme Modernization (Material 3)
+
+- **Goal:** Implement a modern, cohesive, and visually appealing theme.
+- **Actions:**
+    - Update `lib/core/theme/modern_theme.dart`.
+    - Implement `ThemeData` using `ColorScheme.fromSeed` with a primary color.
+    - Define custom styles for `AppBar`, `ElevatedButton`, `Card`, `InputDecoration`, and `TextTheme` to ensure consistency.
+    - Implement both light and dark themes.
+
+### 5.3. Reusable Component Creation
+
+- **Goal:** Reduce code duplication and build a consistent UI library.
+- **Widgets to Create:**
+    - **`AppScaffold`:** A stateful widget managing the main layout, including a responsive sidebar and a top app bar.
+    - **`SummaryCard`:** A stateless widget for dashboard metrics, featuring an icon, title, value, and subtle styling.
+    - **`StatusChip`:** A widget to display product status (In Stock, Low, Out of Stock) with appropriate colors.
+    - **`PrimaryButton`:** A customized `ElevatedButton` for primary actions.
+    - **`AppTextField`:** A styled `TextFormField` for consistent input fields.
+    - **`ResponsiveDataTable`:** A wrapper around `DataTable` to handle responsive behavior and consistent styling.
+
+### 5.4. Page-by-Page Redesign
+
+- **Login Page (`login_screen.dart`):**
+    - **Layout:** Centered card on a clean background.
+    - **Components:** Use `AppTextField` for email/password, `PrimaryButton` for login.
+    - **UX:** Add "Remember me" checkbox and "Forgot password?" text button. Implement clear validation feedback.
+
+- **Main Layout (`AppScaffold`):**
+    - **App Bar:** App name/logo, a global search bar, and a user profile menu.
+    - **Sidebar:** Collapsible navigation with icons and labels for Dashboard, Products, etc. Use `AnimatedContainer` for smooth collapse/expand transitions.
+
+- **Dashboard Page (`dashboard_screen.dart`):**
+    - **Layout:** Grid-based layout for summary cards.
+    - **Components:** Use `SummaryCard` for key metrics. Add a placeholder for a chart and a list for recent activities.
+
+- **Products Page (`product_list_page.dart`):**
+    - **Layout:** Use the new `ResponsiveDataTable`.
+    - **Toolbar:** Add search and filter controls.
+    - **Actions:** An FAB or styled button to trigger the "Add Product" dialog/side sheet.
+    - **Add/Edit Form (`product_form.dart`):** Redesign for clarity and use within a modal. Improve validation and input decoration.
+
+- **Other Pages (Categories, Stock, Suppliers):**
+    - Apply the same principles: use the `AppScaffold`, `ResponsiveDataTable`, and consistent styling for a unified look and feel.
+
+### 5.5. Animations and Transitions
+
+- **Goal:** Enhance the user experience with subtle, professional animations.
+- **Implementations:**
+    - **Page Transitions:** Use `FadeTransition` or `SlideTransition` for routing.
+    - **Hero Animations:** Apply to product images when navigating from the product list/grid to the detail page.
+    - **AnimatedContainer:** For the collapsible sidebar and other state-dependent UI changes.
+    - **AnimatedOpacity:** For showing/hiding elements smoothly.
 
 ## 6. Detailed Outline
 
@@ -142,7 +194,7 @@ InvTrack is a clean, simple, and modern Flutter Web application designed for eff
     *   **Enhanced Form Field Styling:** All `TextFormField`s now consistently use `const InputDecoration` for optimized performance and a uniform, modern appearance.
     *   **Refined UI Layout:** Minor adjustments have been made to spacing, padding, and widget composition for improved visual balance and aesthetic appeal.
     *   **Robust Error Handling:** More comprehensive error handling and `SnackBar` messages are implemented for image picking and product update processes.
-    *   `ElevatedButton` for updating, handling form validation, image re-upload (if new image), and calling `firestoreService.updateProduct`.
+    *   `ElevatedButton` for updating, handling form validation, image re-upload (if new), and calling `firestoreService.updateProduct`.
     *   Ensures `createdAt` remains constant and `updatedAt` is updated on save.
     *   Provides `SnackBar` feedback and navigates back on success.
 *   **`ProductDetailPage` (`lib/features/products/screens/product_detail_page.dart`):**

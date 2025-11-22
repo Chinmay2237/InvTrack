@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:invtrack/core/services/auth_service.dart';
 import 'package:provider/provider.dart';

@@ -28,6 +28,28 @@ class FirestoreService {
         .toList();
   }
 
+  // Get a stream of all products
+  Stream<List<Product>> getProductsStream() {
+    return _db
+        .collection('products')
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Product.fromFirestore(doc))
+            .toList());
+  }
+
+  // Get a stream of recently added products
+  Stream<List<Product>> getRecentProducts({int limit = 5}) {
+    return _db
+        .collection('products')
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => Product.fromFirestore(doc))
+            .toList());
+  }
+
   // Get a single product by its ID
   Future<Product> getProductById(String productId) async {
     final docSnapshot = await _db.collection('products').doc(productId).get();
