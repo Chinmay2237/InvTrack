@@ -185,31 +185,30 @@ class _ProductFormState extends State<ProductForm> {
   Widget _buildImagePicker() {
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: DottedBorder(
-        color: Colors.grey,
-        strokeWidth: 2,
-        borderType: BorderType.RRect,
-        radius: const Radius.circular(12),
-        child: InkWell(
-          onTap: _pickImage,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            alignment: Alignment.center,
-            child: _imageFile != null
-                ? Image.file(_imageFile!, fit: BoxFit.cover)
-                : (widget.initialProduct?.imageUrl.isNotEmpty ?? false)
-                    ? Image.network(widget.initialProduct!.imageUrl,
-                        fit: BoxFit.cover)
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.cloud_upload_outlined,
-                              size: 48, color: Colors.grey),
-                          SizedBox(height: 8),
-                          Text('Upload Image',
-                              style: TextStyle(color: Colors.grey)),
-                        ],
-                      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.all(Radius.circular(12)),
+        child: DottedBorder(
+          // strokeWidth: 2,
+          child: InkWell(
+            onTap: _pickImage,
+            child: Container(
+              alignment: Alignment.center,
+              child: _imageFile != null
+                  ? Image.file(_imageFile!, fit: BoxFit.cover, width: double.infinity, height: double.infinity)
+                  : (widget.initialProduct?.imageUrl.isNotEmpty ?? false)
+                      ? Image.network(widget.initialProduct!.imageUrl,
+                          fit: BoxFit.cover, width: double.infinity, height: double.infinity)
+                      : const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.cloud_upload_outlined,
+                                size: 48, color: Colors.grey),
+                            SizedBox(height: 8),
+                            Text('Upload Image',
+                                style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+            ),
           ),
         ),
       ),

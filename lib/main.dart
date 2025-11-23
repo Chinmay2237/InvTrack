@@ -5,10 +5,10 @@ import 'package:invtrack/core/services/auth_service.dart';
 import 'package:invtrack/core/services/firestore_service.dart';
 import 'package:invtrack/core/theme/modern_theme.dart';
 import 'package:invtrack/features/authentication/screens/login_screen.dart';
-import 'package:invtrack/features/home/screens/home_screen.dart';
-import 'package:invtrack/features/products/screens/add_product.dart';
-import 'package:invtrack/features/products/screens/edit_product.dart';
-import 'package:invtrack/features/products/screens/product_details.dart';
+import 'package:invtrack/features/products/screens/add_product_page.dart';
+import 'package:invtrack/features/products/screens/edit_product_page.dart';
+import 'package:invtrack/features/products/screens/product_detail_page.dart';
+import 'package:invtrack/ui/screens/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:invtrack/firebase_options.dart';
 
@@ -49,17 +49,17 @@ class MyApp extends StatelessWidget {
         ),
         GoRoute(
           path: '/products/add',
-          builder: (context, state) => const AddProductScreen(),
+          builder: (context, state) => const AddProductPage(),
         ),
         GoRoute(
           path: '/products/:id',
-          builder: (context, state) => ProductDetailScreen(
+          builder: (context, state) => ProductDetailPage(
             productId: state.pathParameters['id']!,
           ),
         ),
         GoRoute(
           path: '/products/:id/edit',
-          builder: (context, state) => EditProductScreen(
+          builder: (context, state) => EditProductPage(
             productId: state.pathParameters['id']!,
           ),
         ),

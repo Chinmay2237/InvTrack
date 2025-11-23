@@ -48,8 +48,8 @@ class FirestoreService {
   Stream<List<String>> getProductCategoriesStream() {
     return _db.collection('products').snapshots().map((snapshot) {
       final categories = snapshot.docs
-          .map((doc) => doc.data()['category'] as String?)
-          .where((category) => category != null)
+          .map((doc) => doc.data()['category'])
+          .whereType<String>() // Filters out nulls and non-string values
           .toSet()
           .toList();
       categories.sort();

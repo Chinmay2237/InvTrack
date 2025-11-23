@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:invtrack/ui/screens/dashboard/dashboard_page.dart';
-import 'package:invtrack/ui/screens/products/product_list_page.dart';
+import 'package:invtrack/features/dashboard/screens/dashboard_screen.dart';
+import 'package:invtrack/features/products/screens/product_list_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _pages = [
     const ProductListPage(),
-    const DashboardPage(),
+    const DashboardScreen(),
   ];
 
   @override
