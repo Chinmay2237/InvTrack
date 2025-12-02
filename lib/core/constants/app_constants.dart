@@ -1,9 +1,3 @@
 class AppConstants {
-  static const List<String> categories = [
-    'Electronics',
-    'Furniture',
-    'Office Supplies',
-    'Vehicles',
-    'Other',
-  ];
+  static const String appName = 'Flutter Demo';
 }

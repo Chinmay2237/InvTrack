@@ -1,9 +1,8 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_demo/providers/product_provider.dart';
-import 'package:workshop_demo/widgets/product_form.dart';
+import 'package:workshop_demo/features/products/providers/product_provider.dart';
+import 'package:workshop_demo/features/products/widgets/product_form.dart';
 
 class AddProductScreen extends StatelessWidget {
   const AddProductScreen({super.key});
@@ -15,11 +14,9 @@ class AddProductScreen extends StatelessWidget {
         title: const Text('Add Product'),
       ),
       body: ProductForm(
-        onSubmit: (productData) async {
-          await context.read<ProductProvider>().addProduct(productData);
-          if (context.mounted) {
-            context.go('/');
-          }
+        onSubmit: (productData) {
+          context.read<ProductProvider>().addProduct(productData);
+          context.go('/');
         },
       ),
     );

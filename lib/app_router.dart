@@ -1,48 +1,36 @@
-
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workshop_demo/features/products/screens/add_product_screen.dart';
-import 'package:workshop_demo/features/products/screens/edit_product_screen.dart';
-import 'package:workshop_demo/features/products/screens/product_detail_screen.dart';
-import 'package:workshop_demo/features/products/screens/product_list_screen.dart';
 import 'package:workshop_demo/models/product.dart';
+import 'package:workshop_demo/screens/edit_product_screen.dart';
+import 'package:workshop_demo/screens/inventory_list_screen.dart';
+import 'package:workshop_demo/screens/item_details_screen.dart';
 
 class AppRouter {
+  static const String inventory = '/';
+  static const String itemDetails = '/item-details';
+  static const String editProduct = '/edit-product';
+
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
-    routes: [
+    routes: <RouteBase>[
       GoRoute(
-        path: '/',
-        builder: (context, state) => const ProductListScreen(),
-        routes: [
-          GoRoute(
-            path: 'product/:id',
-            builder: (context, state) {
-              final product = state.extra as Product?;
-              if (product != null) {
-                return ProductDetailScreen(product: product);
-              } else {
-                // Handle the case where the product is not passed
-                // You might want to fetch it from the provider based on the id
-                return const ProductListScreen();
-              }
-            },
-          ),
-          GoRoute(
-            path: 'add-product',
-            builder: (context, state) => const AddProductScreen(),
-          ),
-          GoRoute(
-            path: 'edit-product',
-            builder: (context, state) {
-              final product = state.extra as Product?;
-              if (product != null) {
-                return EditProductScreen(product: product);
-              } else {
-                return const ProductListScreen();
-              }
-            },
-          ),
-        ],
+        path: inventory,
+        builder: (BuildContext context, GoRouterState state) {
+          return const InventoryListScreen();
+        },
+      ),
+      GoRoute(
+        path: itemDetails,
+        builder: (BuildContext context, GoRouterState state) {
+          final product = state.extra as Product;
+          return ItemDetailsScreen(product: product);
+        },
+      ),
+      GoRoute(
+        path: editProduct,
+        builder: (BuildContext context, GoRouterState state) {
+          final product = state.extra as Product?;
+          return EditProductScreen(product: product);
+        },
       ),
     ],
   );

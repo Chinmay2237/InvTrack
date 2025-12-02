@@ -1,18 +1,21 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:workshop_demo/features/products/providers/product_provider.dart';
+import 'package:workshop_demo/router/router.dart';
 
-import 'firebase_options.dart';
-import 'services/auth_service.dart';
-import 'ui/screens/auth/login_screen.dart';
-import 'ui/screens/home/home_screen.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+void main() {
   runApp(const MyApp());
+}
+
+class ThemeProvider with ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  ThemeMode get themeMode => _themeMode;
+
+  void toggleTheme() {
+    _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -20,30 +23,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authService = AuthService();
-    return MaterialApp(
-      title: 'Flutter Firebase Template',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
-        cardTheme: CardTheme(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp.router(
+            title: 'Product Inventory',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              brightness: Brightness.light,
             ),
-          ),
-        ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+            ),
+            themeMode: themeProvider.themeMode,
+            routerConfig: router,
+          );
+        },
       ),
-      home: authService.getCurrentUser() == null
-          ? const LoginScreen()
-          : const HomeScreen(),
     );
   }
 }

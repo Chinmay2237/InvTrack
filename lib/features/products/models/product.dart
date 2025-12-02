@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Product {
   final String id;
   final String name;
@@ -9,9 +7,9 @@ class Product {
   final double price;
   final String assignedTo;
   final String notes;
-  final String imageUrl; // Optional
-  final DateTime? createdAt; // Made nullable
-  final DateTime? updatedAt; // Made nullable
+  final String imageUrl;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   Product({
     required this.id,
@@ -22,60 +20,10 @@ class Product {
     required this.price,
     required this.assignedTo,
     required this.notes,
-    this.imageUrl = '', // Default to empty string if not provided
-    this.createdAt, // No longer required
-    this.updatedAt, // No longer required
+    this.imageUrl = '',
+    this.createdAt,
+    this.updatedAt,
   });
-
-  factory Product.fromFirestore(DocumentSnapshot doc) {
-    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Product(
-      id: doc.id,
-      name: data['name'] ?? '',
-      serialNumber: data['serialNumber'] ?? '',
-      category: data['category'] ?? '',
-      cost: (data['cost'] ?? 0.0).toDouble(),
-      price: (data['price'] ?? 0.0).toDouble(),
-      assignedTo: data['assignedTo'] ?? '',
-      notes: data['notes'] ?? '',
-      imageUrl: data['imageUrl'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp?)
-          ?.toDate(), // Safely parse nullable Timestamp
-      updatedAt: (data['updatedAt'] as Timestamp?)
-          ?.toDate(), // Safely parse nullable Timestamp
-    );
-  }
-
-  // This method is for creating a new document or fully replacing an existing one
-  Map<String, dynamic> toFirestore() {
-    return {
-      'name': name,
-      'serialNumber': serialNumber,
-      'category': category,
-      'cost': cost,
-      'price': price,
-      'assignedTo': assignedTo,
-      'notes': notes,
-      'imageUrl': imageUrl,
-      // createdAt should only be set on initial creation by the service
-      // updatedAt should always be updated by the service
-    };
-  }
-
-  // Helper method for updating specific fields without recreating the entire object for Firestore
-  Map<String, dynamic> toUpdateFirestore() {
-    return {
-      'name': name,
-      'serialNumber': serialNumber,
-      'category': category,
-      'cost': cost,
-      'price': price,
-      'assignedTo': assignedTo,
-      'notes': notes,
-      'imageUrl': imageUrl,
-      // 'updatedAt': FieldValue.serverTimestamp(), // This will be handled by the service now
-    };
-  }
 
   Product copyWith({
     String? id,

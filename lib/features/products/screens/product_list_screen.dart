@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_demo/providers/product_provider.dart';
-import 'package:workshop_demo/widgets/product_card.dart';
+import 'package:workshop_demo/features/products/providers/product_provider.dart';
 
 class ProductListScreen extends StatelessWidget {
   const ProductListScreen({super.key});
@@ -12,36 +10,26 @@ class ProductListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory'),
+        title: const Text('Products'),
       ),
       body: Consumer<ProductProvider>(
         builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (provider.errorMessage != null) {
-            return Center(child: Text(provider.errorMessage!));
-          }
-
-          if (provider.products.isEmpty) {
-            return const Center(child: Text('No products found.'));
-          }
-
+          final products = provider.products;
           return ListView.builder(
-            padding: const EdgeInsets.all(8.0),
-            itemCount: provider.products.length,
+            itemCount: products.length,
             itemBuilder: (context, index) {
-              final product = provider.products[index];
-              return ProductCard(product: product);
+              final product = products[index];
+              return ListTile(
+                title: Text(product.name),
+                subtitle: Text(product.serialNumber),
+                onTap: () => context.go('/products/${product.id}'),
+              );
             },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.go('/add-product');
-        },
+        onPressed: () => context.go('/add-product'),
         child: const Icon(Icons.add),
       ),
     );

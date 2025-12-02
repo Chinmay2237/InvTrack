@@ -4,6 +4,7 @@ class Product {
   final String description;
   final double price;
   final int stock;
+  final String category;
 
   Product({
     required this.id,
@@ -11,26 +12,28 @@ class Product {
     required this.description,
     required this.price,
     required this.stock,
+    required this.category, required DateTime lastUpdated,
   });
 
-  // Convert a Product object into a map object
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'name': name,
       'description': description,
       'price': price,
       'stock': stock,
+      'category': category,
     };
   }
 
-  // Convert a map object into a Product object
-  factory Product.fromMap(Map<String, dynamic> map, String id) {
+  factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: id,
-      name: map['name'] ?? '',
-      description: map['description'] ?? '',
-      price: (map['price'] ?? 0).toDouble(),
-      stock: (map['stock'] ?? 0).toInt(),
+      id: map['id'],
+      name: map['name'],
+      description: map['description'],
+      price: map['price'],
+      stock: map['stock'],
+      category: map['category'], lastUpdated: map['createdAt'],
     );
   }
 }

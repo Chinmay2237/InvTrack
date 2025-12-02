@@ -1,10 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:workshop_demo/models/product.dart';
-import 'package:workshop_demo/providers/product_provider.dart';
-import 'package:workshop_demo/widgets/product_form.dart';
+import 'package:workshop_demo/features/products/models/product.dart';
+import 'package:workshop_demo/features/products/providers/product_provider.dart';
+import 'package:workshop_demo/features/products/widgets/product_form.dart';
 
 class EditProductScreen extends StatelessWidget {
   final Product product;
@@ -19,11 +18,9 @@ class EditProductScreen extends StatelessWidget {
       ),
       body: ProductForm(
         product: product,
-        onSubmit: (productData) async {
-          await context.read<ProductProvider>().updateProduct(product.id, productData);
-          if (context.mounted) {
-            context.go('/');
-          }
+        onSubmit: (productData) {
+          context.read<ProductProvider>().updateProduct(product.id, productData);
+          context.go('/');
         },
       ),
     );
