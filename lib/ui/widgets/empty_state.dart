@@ -1,48 +1,55 @@
 import 'package:flutter/material.dart';
 
 class EmptyState extends StatelessWidget {
-  final IconData icon;
   final String title;
   final String message;
-  final Widget? action;
+  final VoidCallback? onActionPressed;
+  final String? actionText;
+  final IconData icon;
 
   const EmptyState({
     super.key,
-    required this.icon,
     required this.title,
     required this.message,
-    this.action,
+    this.onActionPressed,
+    this.actionText,
+    this.icon = Icons.inbox_outlined,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
-      child: Padding(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 400),
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon,
-                size: 80, color: Theme.of(context).colorScheme.secondary),
+            Icon(icon, size: 80, color: theme.colorScheme.secondary),
             const SizedBox(height: 24),
             Text(
               title,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
               textAlign: TextAlign.center,
+              style: theme.textTheme.headlineSmall,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyLarge,
               textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge,
             ),
-            if (action != null) ...[
-              const SizedBox(height: 32),
-              action!,
-            ],
+            if (onActionPressed != null && actionText != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 32.0),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.add),
+                  label: Text(actionText!),
+                  onPressed: onActionPressed,
+                ),
+              ),
           ],
         ),
       ),

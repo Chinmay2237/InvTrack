@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:invtrack/features/dashboard/screens/dashboard_screen.dart';
-import 'package:invtrack/features/products/screens/product_list_page.dart';
+
+import '../../../screens/dashboard_screen.dart';
+import '../../../screens/product_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const ProductListPage(),
+    const ProductListScreen(),
     const DashboardScreen(),
   ];
 

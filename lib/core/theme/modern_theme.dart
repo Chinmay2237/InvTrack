@@ -2,96 +2,73 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ModernTheme {
-  static const Color primaryColor = Color(0xFF6C63FF);
-  static const Color secondaryColor = Color(0xFFF0F2F5);
-  static const Color accentColor = Color(0xFFFF6B6B);
-  static const Color textColor = Color(0xFF333333);
-  static const Color backgroundColor = Color(0xFFFFFFFF);
+  static const Color primarySeedColor = Colors.deepPurple;
 
-  static ThemeData get theme {
+  static final TextTheme _appTextTheme = TextTheme(
+    displayLarge: GoogleFonts.oswald(fontSize: 57, fontWeight: FontWeight.bold),
+    displayMedium: GoogleFonts.oswald(fontSize: 45, fontWeight: FontWeight.bold),
+    displaySmall: GoogleFonts.oswald(fontSize: 36, fontWeight: FontWeight.bold),
+    headlineLarge: GoogleFonts.roboto(fontSize: 32, fontWeight: FontWeight.w500),
+    headlineMedium: GoogleFonts.roboto(fontSize: 28, fontWeight: FontWeight.w500),
+    headlineSmall: GoogleFonts.roboto(fontSize: 24, fontWeight: FontWeight.w500),
+    titleLarge: GoogleFonts.roboto(fontSize: 22, fontWeight: FontWeight.w500),
+    titleMedium: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w500),
+    titleSmall: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w500),
+    bodyLarge: GoogleFonts.openSans(fontSize: 16),
+    bodyMedium: GoogleFonts.openSans(fontSize: 14),
+    bodySmall: GoogleFonts.openSans(fontSize: 12),
+    labelLarge: GoogleFonts.roboto(fontSize: 14, fontWeight: FontWeight.w500),
+    labelMedium: GoogleFonts.roboto(fontSize: 12, fontWeight: FontWeight.w500),
+    labelSmall: GoogleFonts.roboto(fontSize: 10, fontWeight: FontWeight.w500),
+  );
+
+  static ThemeData get lightTheme {
     return ThemeData(
-      primaryColor: primaryColor,
-      scaffoldBackgroundColor: backgroundColor,
-      appBarTheme: AppBarTheme(
-        backgroundColor: primaryColor,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        titleTextStyle: GoogleFonts.poppins(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primarySeedColor,
+        brightness: Brightness.light,
       ),
-      textTheme: TextTheme(
-        displayLarge: GoogleFonts.poppins(
-          color: textColor,
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-        ),
-        displayMedium: GoogleFonts.poppins(
-          color: textColor,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-        bodyLarge: GoogleFonts.poppins(
-          color: textColor,
-          fontSize: 16,
-        ),
-        bodyMedium: GoogleFonts.poppins(
-          color: Colors.grey[600],
-          fontSize: 14,
-        ),
+      textTheme: _appTextTheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: primarySeedColor,
+        foregroundColor: Colors.white,
+        titleTextStyle: GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.bold),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          textStyle: GoogleFonts.poppins(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: secondaryColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-        hintStyle: GoogleFonts.poppins(
-          color: Colors.grey[500],
-        ),
-      ),
-      cardTheme: CardThemeData(
-        elevation: 4,
-        shadowColor: Colors.grey.withOpacity(0.2),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          backgroundColor: primarySeedColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ),
     );
   }
-}
 
-class ThemeProvider with ChangeNotifier {
-  ThemeData _themeData = ModernTheme.theme;
-
-  ThemeData get themeData => _themeData;
-
-  void setDarkTheme() {
-    _themeData = ThemeData.dark().copyWith(
-      textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: primarySeedColor,
+        brightness: Brightness.dark,
+      ),
+      textTheme: _appTextTheme,
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.grey[900],
+        foregroundColor: Colors.white,
+        titleTextStyle: GoogleFonts.oswald(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+       elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.black,
+          backgroundColor: primarySeedColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          textStyle: GoogleFonts.roboto(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      ),
     );
-    notifyListeners();
-  }
-
-  void setLightTheme() {
-    _themeData = ModernTheme.theme;
-    notifyListeners();
   }
 }

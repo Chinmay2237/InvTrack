@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:invtrack/features/products/models/product.dart';
+
+import '../../../../features/products/models/product.dart';
 
 class ProductListLayout extends StatelessWidget {
   final List<Product> products;
