@@ -4,14 +4,14 @@ class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final TextInputType? keyboardType;
- final  bool? obscureText;
+  final bool? obscureText;
 
   const CustomTextField({
     super.key,
     required this.controller,
     required this.labelText,
     this.keyboardType,
-     this.obscureText,
+    this.obscureText,
   });
 
   @override
@@ -19,7 +19,7 @@ class CustomTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      obscureText: obscureText!,
+      obscureText: obscureText ?? false,
       decoration: InputDecoration(
         labelText: labelText,
         border: const OutlineInputBorder(),
