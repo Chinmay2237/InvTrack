@@ -16,23 +16,19 @@ class CategoryBarChart extends StatelessWidget {
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: categoryCounts.values
-                .fold<double>(0, (max, v) => v > max ? v : max) *
-            1.2,
+        maxY: categoryCounts.values.fold<double>(0, (max, v) => v > max ? v : max) * 1.2,
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
             // tooltipBgColor: Colors.blueGrey,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               final category = categoryCounts.keys.elementAt(groupIndex);
               return BarTooltipItem(
-                '$category ',
-                const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+                '$category\n',
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                 children: <TextSpan>[
                   TextSpan(
                     text: rod.toY.round().toString(),
-                    style: const TextStyle(
-                        color: Colors.yellow, fontWeight: FontWeight.bold),
+                    style: const TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
                   ),
                 ],
               );
@@ -48,21 +44,17 @@ class CategoryBarChart extends StatelessWidget {
               getTitlesWidget: (double value, TitleMeta meta) {
                 final category = categoryCounts.keys.elementAt(value.toInt());
                 return SideTitleWidget(
-                  // axisSide: meta.axisSide,
+                  meta: meta,
                   space: 8.0,
-                  meta: null,
                   child: Text(category, style: theme.textTheme.bodySmall),
                 );
               },
               reservedSize: 38,
             ),
           ),
-          leftTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles:
-              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(show: false),
         barGroups: _generateBarGroups(categoryCounts),
@@ -74,14 +66,12 @@ class CategoryBarChart extends StatelessWidget {
   Map<String, double> _getCategoryCounts() {
     final Map<String, double> categoryCounts = {};
     for (var product in products) {
-      categoryCounts.update(product.category, (value) => value + 1,
-          ifAbsent: () => 1);
+      categoryCounts.update(product.category, (value) => value + 1, ifAbsent: () => 1);
     }
     return categoryCounts;
   }
 
-  List<BarChartGroupData> _generateBarGroups(
-      Map<String, double> categoryCounts) {
+  List<BarChartGroupData> _generateBarGroups(Map<String, double> categoryCounts) {
     return List.generate(categoryCounts.length, (index) {
       final category = categoryCounts.keys.elementAt(index);
       final value = categoryCounts[category]!;

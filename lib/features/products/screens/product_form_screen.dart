@@ -28,7 +28,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   void initState() {
     super.initState();
     if (_isEditing) {
-      final existingProduct = Provider.of<ProductProvider>(context, listen: false).findById  (widget.productId!);
+      final existingProduct = Provider.of<ProductProvider>(context, listen: false).findById(widget.productId!);
       _product = existingProduct.copyWith(); // Create a copy
     } else {
       _product = const Product(id: '', name: '', description: '', price: 0, category: '', quantity: 0, imageUrl: '');
@@ -52,7 +52,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       if (_isEditing) {
         productProvider.updateProduct(_product.id.toString(),_product);
       } else {
-        productProvider.addProduct(_product.copyWith(id: DateTime.now().toIso8601String()));
+        productProvider.addProduct(_product.copyWith(id: DateTime.now().toIso8601String()), null);
       }
       context.pop();
     }
@@ -141,11 +141,11 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             borderRadius: BorderRadius.circular(12),
             color: theme.colorScheme.surface,
           ),
-          child: (_imageFile != null) || (_isEditing && _product.imageUrl != null && _product.imageUrl!.isNotEmpty)
+          child: _imageFile != null || (_isEditing && _product.imageUrl.isNotEmpty)
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Image.file(
-                    _imageFile ?? File(_product.imageUrl!),
+                    _imageFile ?? File(_product.imageUrl),
                     fit: BoxFit.cover,
                   ),
                 )
