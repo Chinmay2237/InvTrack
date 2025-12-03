@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:myapp/core/theme/app_colors.dart';
+import 'package:myapp/core/theme/app_text.dart';
 
 class ImagePickerWidget extends StatefulWidget {
   final Function(File?) onImagePicked;
@@ -45,9 +47,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         width: double.infinity,
         height: 200,
         decoration: BoxDecoration(
-          color: Colors.grey[200],
+          color: AppColors.surface.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.3)),
+          border: Border.all(color: AppColors.grey.withOpacity(0.3)),
         ),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -59,9 +61,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey[600]),
+                            Icon(Icons.add_a_photo_outlined, size: 40, color: AppColors.textSecondary),
                             const SizedBox(height: 8),
-                            Text('Tap to select image', style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600])),
+                            Text('Tap to select image', style: AppText.bodyLarge.copyWith(color: AppColors.textSecondary)),
                           ],
                         ),
                       ),

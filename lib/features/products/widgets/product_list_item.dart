@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/core/theme/app_colors.dart';
+import 'package:myapp/core/theme/app_text.dart';
+import 'package:myapp/core/theme/app_spacing.dart';
 import 'package:myapp/features/products/models/product.dart';
 import 'package:myapp/features/products/widgets/stock_status_tag.dart';
 import 'package:myapp/features/products/screens/product_detail_screen.dart';
@@ -11,8 +13,6 @@ class ProductListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -22,9 +22,6 @@ class ProductListItem extends StatelessWidget {
         );
       },
       child: Card(
-        elevation: 6,
-        shadowColor: AppColors.primary.withOpacity(0.2),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,28 +29,28 @@ class ProductListItem extends StatelessWidget {
               child: _buildImage(context),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: AppSpacing.edgeInsetsAll12,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     product.name,
-                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    style: AppText.titleMedium.copyWith(fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.space4),
                   Text(
                     product.category,
-                    style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                    style: AppText.bodySmall.copyWith(color: AppColors.textSecondary),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.space12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '${product.price.toStringAsFixed(2)}',
-                        style: theme.textTheme.titleLarge?.copyWith(
+                        style: AppText.titleLarge.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
@@ -86,7 +83,7 @@ class ProductListItem extends StatelessWidget {
                 if (loadingProgress == null) return child;
                 return Container(
                   height: 150,
-                  color: Colors.grey[200],
+                  color: AppColors.grey.withOpacity(0.1),
                   child: Center(
                     child: CircularProgressIndicator(
                       value: loadingProgress.expectedTotalBytes != null
@@ -98,8 +95,8 @@ class ProductListItem extends StatelessWidget {
               },
               errorBuilder: (context, error, stackTrace) => Container(
                 height: 150,
-                color: Colors.grey[200],
-                child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                color: AppColors.grey.withOpacity(0.1),
+                child: const Icon(Icons.broken_image, color: AppColors.grey, size: 40),
               ),
             ),
           ),

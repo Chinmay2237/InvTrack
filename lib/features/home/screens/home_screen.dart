@@ -1,55 +1,54 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/core/theme/app_colors.dart';
 import 'package:myapp/features/dashboard/screens/dashboard_screen.dart';
 import 'package:myapp/features/products/screens/user_products_screen.dart';
-import 'package:myapp/features/settings/screens/settings_screen.dart';
+import 'package:myapp/features/assign/screens/handover_screen.dart';
+import 'package:myapp/core/theme/app_colors.dart';
 
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  int _selectedIndex = 0;
-
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
   final List<Widget> _screens = [
     const DashboardScreen(),
     const UserProductsScreen(),
-    const SettingsScreen(),
+    const HandoversScreen(),
   ];
 
-  void _onItemTapped(int index) {
+  void _onTabTapped(int index) {
     setState(() {
-      _selectedIndex = index;
+      _currentIndex = index;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: AppColors.grey,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.inventory_2_outlined),
-            activeIcon: Icon(Icons.inventory_2),
             label: 'Products',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.assignment_turned_in_outlined),
+            label: 'Handovers',
           ),
         ],
       ),

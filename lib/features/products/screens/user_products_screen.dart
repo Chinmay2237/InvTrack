@@ -5,6 +5,8 @@ import 'package:myapp/features/products/widgets/product_list_item.dart';
 import 'package:myapp/features/products/screens/add_product_screen.dart';
 import 'package:myapp/features/products/models/stock_filter.dart';
 import 'package:myapp/core/theme/app_colors.dart';
+import 'package:myapp/core/theme/app_text.dart';
+import 'package:myapp/core/theme/app_spacing.dart';
 
 class UserProductsScreen extends StatefulWidget {
   const UserProductsScreen({super.key});
@@ -31,6 +33,8 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Products'),
@@ -38,7 +42,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
       body: Column(
         children: [
           _buildSearchBar(),
-          _buildFilterChips(),
+          _buildFilterChips(theme),
           Expanded(
             child: FutureBuilder(
               future: _fetchProductsFuture,
@@ -60,24 +64,17 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
         },
         label: const Text('Add Product'),
         icon: const Icon(Icons.add),
-        backgroundColor: AppColors.primary,
       ),
     );
   }
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: AppSpacing.edgeInsetsAll16,
       child: TextField(
         decoration: InputDecoration(
           hintText: 'Search Products...',
           prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16.0),
-            borderSide: BorderSide.none,
-          ),
-          filled: true,
-          fillColor: Colors.grey.withOpacity(0.1),
         ),
         onChanged: (value) {
           Provider.of<ProductProvider>(context, listen: false).searchProducts(value);
@@ -86,31 +83,30 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
     );
   }
 
-  Widget _buildFilterChips() {
+  Widget _buildFilterChips(ThemeData theme) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: AppSpacing.edgeInsetsSymmetricH16,
       child: SizedBox(
         height: 40,
         child: ListView( 
           scrollDirection: Axis.horizontal,
           children: StockFilter.values.map((filter) {
+            final isSelected = _selectedFilter == filter;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4.0),
               child: FilterChip(
                 label: Text(filter.name[0].toUpperCase() + filter.name.substring(1)),
-                selected: _selectedFilter == filter,
-                onSelected: (isSelected) {
-                  if (isSelected) {
+                selected: isSelected,
+                onSelected: (selected) {
+                  if (selected) {
                     setState(() {
                       _selectedFilter = filter;
                     });
                     Provider.of<ProductProvider>(context, listen: false).setFilter(filter);
                   }
                 },
-                selectedColor: AppColors.primary,
-                labelStyle: TextStyle(
-                  color: _selectedFilter == filter ? Colors.white : Colors.black,
-                ),
+                selectedColor: theme.chipTheme.selectedColor,
+                labelStyle: isSelected ? AppText.bodyMedium.copyWith(color: theme.chipTheme.labelStyle?.color) : AppText.bodyMedium,
               ),
             );
           }).toList(),
@@ -122,18 +118,18 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
   Widget _buildProductGrid(ProductProvider productsData) {
     final products = productsData.items;
     if (products.isEmpty) {
-      return const Center(
-        child: Text('No products found. Try a different search or filter.'),
+      return Center(
+        child: Text('No products found. Try a different search or filter.', style: AppText.bodyLarge.copyWith(color: AppColors.textSecondary)),
       );
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.edgeInsetsAll16,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.75,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
+        crossAxisSpacing: AppSpacing.space16,
+        mainAxisSpacing: AppSpacing.space16,
       ),
       itemCount: products.length,
       itemBuilder: (ctx, i) => ProductListItem(product: products[i]),

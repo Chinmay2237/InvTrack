@@ -19,8 +19,8 @@ class ProductProvider with ChangeNotifier {
 
   void _generateDummyProducts() {
     final Random random = Random();
-    final categories = ['Electronics', 'Clothing', 'Books', 'Home Goods', 'Sports'];
-    _items = List.generate(25, (index) {
+    final categories = ['Electronics', 'Furniture', 'Stationery', 'Office Supplies', 'Accessories'];
+    _items = List.generate(50, (index) {
       final id = 'p${index + 1}';
       final quantity = random.nextInt(25); // Random quantity between 0 and 24
       return Product(
@@ -55,6 +55,17 @@ class ProductProvider with ChangeNotifier {
       default:
         return filteredItems;
     }
+  }
+
+  List<Product> get justInItems {
+    // Simulate "Just In" items by taking the most recently added items.
+    // In a real app, this would be based on a creation timestamp.
+    return _items.length > 5 ? _items.sublist(0, 5) : _items;
+  }
+
+  List<Product> get officeItems {
+    // A subset of items for general office use.
+    return _items.where((p) => p.category == 'Stationery' || p.category == 'Office Supplies').toList();
   }
 
   List<Product> get lowStockItems {

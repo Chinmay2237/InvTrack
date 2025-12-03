@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/theme/app_text.dart';
+import 'package:myapp/core/theme/app_spacing.dart';
 import 'package:myapp/features/products/models/product.dart';
 import 'package:myapp/features/products/widgets/product_list_item.dart';
 
@@ -10,19 +12,17 @@ class ProductCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: AppSpacing.edgeInsetsSymmetricH16,
           child: Text(
             title,
-            style: theme.textTheme.titleLarge,
+            style: AppText.titleLarge,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppSpacing.space16),
         SizedBox(
           height: 250,
           child: ListView.builder(
@@ -30,7 +30,7 @@ class ProductCarousel extends StatelessWidget {
             itemCount: products.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.only(left: 16.0),
+                padding: const EdgeInsets.only(left: AppSpacing.space16),
                 child: SizedBox(
                   width: 180,
                   child: ProductListItem(product: products[index]),

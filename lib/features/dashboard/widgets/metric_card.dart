@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/core/theme/app_text.dart';
+import 'package:myapp/core/theme/app_spacing.dart';
 
 class MetricCard extends StatelessWidget {
   final String title;
@@ -16,13 +18,9 @@ class MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: AppSpacing.edgeInsetsAll16,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,15 +30,15 @@ class MetricCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                  style: AppText.titleMedium.copyWith(fontWeight: FontWeight.bold),
                 ),
-                Icon(icon, color: color),
+                Icon(icon, color: color, size: 28),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.space8),
             Text(
               value,
-              style: theme.textTheme.headlineMedium?.copyWith(color: color, fontWeight: FontWeight.bold),
+              style: AppText.headlineMedium.copyWith(color: color, fontWeight: FontWeight.bold),
             ),
           ],
         ),

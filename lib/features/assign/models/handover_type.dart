@@ -1,0 +1,4 @@
+enum HandoverType {
+  Permanent,
+  Temporary,
+}

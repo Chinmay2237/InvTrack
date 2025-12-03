@@ -6,6 +6,8 @@ import 'package:myapp/features/products/models/product.dart';
 import 'package:myapp/features/products/providers/product_provider.dart';
 import 'package:myapp/features/products/widgets/image_picker_widget.dart';
 import 'package:myapp/core/widgets/ui_helper.dart';
+import 'package:myapp/core/theme/app_text.dart';
+import 'package:myapp/core/theme/app_spacing.dart';
 
 class AddProductScreen extends StatefulWidget {
   const AddProductScreen({super.key});
@@ -72,12 +74,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add New Product'),
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.save_alt_rounded),
@@ -90,7 +89,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: AppSpacing.edgeInsetsAll24,
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -103,23 +102,23 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           },
                         ),
                       ),
-                      UIHelper.verticalSpaceLarge,
-                      Text('Product Details', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
-                      UIHelper.verticalSpaceMedium,
+                      const SizedBox(height: AppSpacing.space24),
+                      Text('Product Details', style: AppText.headlineSmall.copyWith(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: AppSpacing.space16),
                       _buildTextFormField(
                         labelText: 'Product Name',
                         icon: Icons.label_outline_rounded,
                         validator: (value) => (value == null || value.isEmpty) ? 'Please provide a name.' : null,
                         onSaved: (value) => _newProduct = _newProduct.copyWith(name: value),
                       ),
-                      UIHelper.verticalSpaceMedium,
+                      const SizedBox(height: AppSpacing.space16),
                       _buildTextFormField(
                         labelText: 'Category',
                         icon: Icons.category_outlined,
                         validator: (value) => (value == null || value.isEmpty) ? 'Please provide a category.' : null,
                         onSaved: (value) => _newProduct = _newProduct.copyWith(category: value),
                       ),
-                      UIHelper.verticalSpaceMedium,
+                      const SizedBox(height: AppSpacing.space16),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -137,7 +136,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                               onSaved: (value) => _newProduct = _newProduct.copyWith(price: double.parse(value!)),
                             ),
                           ),
-                          UIHelper.horizontalSpaceMedium,
+                          const SizedBox(width: AppSpacing.space16),
                           Expanded(
                             child: _buildTextFormField(
                               labelText: 'Quantity',
@@ -154,7 +153,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                           ),
                         ],
                       ),
-                      UIHelper.verticalSpaceMedium,
+                      const SizedBox(height: AppSpacing.space16),
                       _buildTextFormField(
                         labelText: 'Description',
                         icon: Icons.description_outlined,
@@ -167,16 +166,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         },
                         onSaved: (value) => _newProduct = _newProduct.copyWith(description: value),
                       ),
-                      UIHelper.verticalSpaceLarge,
+                      const SizedBox(height: AppSpacing.space24),
                       Center(
                         child: ElevatedButton.icon(
                           icon: const Icon(Icons.add_shopping_cart_rounded),
                           label: const Text('Add Product'),
                           onPressed: _saveForm,
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-                            textStyle: theme.textTheme.titleLarge,
-                          ),
                         ),
                       ),
                     ],
@@ -199,9 +194,6 @@ class _AddProductScreenState extends State<AddProductScreen> {
       decoration: InputDecoration(
         labelText: labelText,
         prefixIcon: Icon(icon),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12.0)),
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surface.withAlpha(50),
       ),
       keyboardType: keyboardType,
       maxLines: maxLines,
