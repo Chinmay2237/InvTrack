@@ -1,32 +1,42 @@
-# Project Blueprint
+# Inventory Management App
 
 ## Overview
 
-This document outlines the architecture and features of the Product Inventory application. The application is a Flutter project designed to manage a list of products. It is built to run on multiple platforms (mobile and web) using a single codebase.
-
-The current version of the application uses a local, in-memory state management solution to handle product data, ensuring the app can run standalone without any backend dependencies.
-
-## Architecture & Design
-
-- **State Management**: The app uses the `provider` package for state management. A central `ProductProvider` holds the list of products in memory and notifies listeners of any changes.
-- **Routing**: Navigation is handled by the `go_router` package, providing a declarative routing solution.
-- **UI**: The user interface is built with Flutter's Material components. The design is simple and functional, focusing on core features.
-- **Structure**: The code is organized by feature, with a `products` feature directory containing all related models, providers, screens, and widgets.
+This is a Flutter application for managing an inventory of products. It allows users to view a list of products, see the details of each product, add new products, edit existing products, and delete products from the inventory. The application uses Firebase Firestore as its backend.
 
 ## Features
 
-- **Product List**: The main screen displays a list of all products.
-- **Add Product**: Users can add a new product to the list through a dedicated form.
-- **View Product Details**: Tapping a product in the list navigates to a detail screen showing all its information.
-- **Edit Product**: From the detail screen, users can navigate to an edit form to update a product's information.
-- **Delete Product**: Users can delete a product from the detail screen.
+*   **Product List:** View a list of all products in the inventory.
+*   **Product Details:** View the details of a specific product, including its name, description, price, and quantity.
+*   **Add Product:** Add a new product to the inventory.
+*   **Edit Product:** Edit the details of an existing product.
+*   **Delete Product:** Delete a product from the inventory.
+*   **Dashboard:** View a dashboard with a summary of the inventory.
+*   **Theme Toggle:** Switch between light and dark themes.
 
-## Current Plan: Remove Firebase Integration
+## Project Structure
 
-The following steps will be taken to remove Firebase and switch to an in-memory data solution:
+*   `lib/`
+    *   `core/`
+        *   `router/`
+            *   `app_router.dart`: Defines the routes for the application.
+        *   `theme/`
+            *   `app_theme.dart`: Defines the light and dark themes for the application.
+            *   `theme_provider.dart`: The provider for managing the theme.
+    *   `features/`
+        *   `home/`
+            *   `screens/`
+                *   `home_screen.dart`: The main screen of the application.
+        *   `products/`
+            *   `models/`
+                *   `product.dart`: The model for a product.
+            *   `providers/`
+                *   `product_provider.dart`: The provider for managing the products using Firebase Firestore.
+            *   `screens/`
+                *   `product_list_screen.dart`: The screen for the product list.
+                *   `add_product_screen.dart`: The screen for adding a new product.
+                *   `product_detail_screen.dart`: The screen for the product details.
+                *   `edit_product_screen.dart`: The screen for editing an existing product.
+    *   `main.dart`: The main entry point of the application.
+*   `blueprint.md`: This file.
 
-1.  **Remove Firebase Dependencies**: Delete `cloud_firestore` and `firebase_core` from the `pubspec.yaml` file.
-2.  **Update `main.dart`**: Remove all Firebase initialization code.
-3.  **Simplify Product Model**: The `Product` model will be stripped of any Firestore-specific methods like `fromFirestore` and `toFirestore`.
-4.  **Re-implement `ProductProvider`**: The provider will be rewritten to manage a simple `List<Product>` in memory. It will no longer use `Stream`s and will rely on `notifyListeners()` to update the UI.
-5.  **Update UI Screens**: All screens (`ProductListScreen`, `ProductDetailScreen`, `AddProductScreen`, `EditProductScreen`) will be updated to interact with the new in-memory provider.

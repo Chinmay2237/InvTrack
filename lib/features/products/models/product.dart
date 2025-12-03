@@ -1,55 +1,37 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
-  final String id;
-  final String name;
-  final String serialNumber;
-  final String category;
-  final double cost;
-  final double price;
-  final String assignedTo;
-  final String notes;
-  final String imageUrl;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
+  String id;
+  String name;
+  String description;
+  double price;
+  int quantity;
 
   Product({
     required this.id,
     required this.name,
-    required this.serialNumber,
-    required this.category,
-    required this.cost,
+    required this.description,
     required this.price,
-    required this.assignedTo,
-    required this.notes,
-    this.imageUrl = '',
-    this.createdAt,
-    this.updatedAt,
+    required this.quantity,
   });
 
-  Product copyWith({
-    String? id,
-    String? name,
-    String? serialNumber,
-    String? category,
-    double? cost,
-    double? price,
-    String? assignedTo,
-    String? notes,
-    String? imageUrl,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
+  factory Product.fromFirestore(DocumentSnapshot doc) {
+    Map data = doc.data() as Map<String, dynamic>;
     return Product(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      serialNumber: serialNumber ?? this.serialNumber,
-      category: category ?? this.category,
-      cost: cost ?? this.cost,
-      price: price ?? this.price,
-      assignedTo: assignedTo ?? this.assignedTo,
-      notes: notes ?? this.notes,
-      imageUrl: imageUrl ?? this.imageUrl,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      id: doc.id,
+      name: data['name'] ?? '',
+      description: data['description'] ?? '',
+      price: (data['price'] ?? 0).toDouble(),
+      quantity: data['quantity'] ?? 0,
     );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'description': description,
+      'price': price,
+      'quantity': quantity,
+    };
   }
 }

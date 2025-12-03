@@ -1,36 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:workshop_demo/models/product.dart';
-import 'package:workshop_demo/screens/edit_product_screen.dart';
-import 'package:workshop_demo/screens/inventory_list_screen.dart';
-import 'package:workshop_demo/screens/item_details_screen.dart';
+import 'package:myapp/features/dashboard/screens/dashboard_screen.dart';
+
+import 'features/products/screens/add_product_screen.dart';
+import 'features/products/screens/product_detail_screen.dart';
+import 'features/products/screens/product_list_screen.dart';
 
 class AppRouter {
-  static const String inventory = '/';
-  static const String itemDetails = '/item-details';
-  static const String editProduct = '/edit-product';
-
   static final GoRouter router = GoRouter(
-    routes: <RouteBase>[
+    routes: <GoRoute>[
       GoRoute(
-        path: inventory,
+        path: '/',
         builder: (BuildContext context, GoRouterState state) {
-          return const InventoryListScreen();
+          return const DashboardScreen();
         },
-      ),
-      GoRoute(
-        path: itemDetails,
-        builder: (BuildContext context, GoRouterState state) {
-          final product = state.extra as Product;
-          return ItemDetailsScreen(product: product);
-        },
-      ),
-      GoRoute(
-        path: editProduct,
-        builder: (BuildContext context, GoRouterState state) {
-          final product = state.extra as Product?;
-          return EditProductScreen(product: product);
-        },
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'products',
+            builder: (BuildContext context, GoRouterState state) {
+              return const ProductListScreen();
+            },
+            routes: <GoRoute>[
+              GoRoute(
+                path: 'add',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const AddProductScreen();
+                },
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (BuildContext context, GoRouterState state) {
+                  final String id = state.pathParameters['id']!;
+                  return ProductDetailScreen(productId: id);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

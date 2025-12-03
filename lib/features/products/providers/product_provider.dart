@@ -1,53 +1,34 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:workshop_demo/features/products/models/product.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/product.dart';
 
 class ProductProvider with ChangeNotifier {
-  final List<Product> _products = [];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String _collectionPath = 'products';
 
-  List<Product> get products => _products;
-
-  void addProduct(Map<String, dynamic> productData) {
-    final newProduct = Product(
-      id: Random().nextInt(1000).toString(),
-      name: productData['name'],
-      serialNumber: productData['serialNumber'],
-      category: productData['category'],
-      cost: productData['cost'],
-      price: productData['price'],
-      assignedTo: productData['assignedTo'],
-      notes: productData['notes'],
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-    );
-    _products.add(newProduct);
-    notifyListeners();
+  Stream<List<Product>> getProducts() {
+    return _firestore.collection(_collectionPath).snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => Product.fromFirestore(doc)).toList();
+    });
   }
 
-  void updateProduct(String id, Map<String, dynamic> productData) {
-    final index = _products.indexWhere((p) => p.id == id);
-    if (index != -1) {
-      _products[index] = _products[index].copyWith(
-        name: productData['name'],
-        serialNumber: productData['serialNumber'],
-        category: productData['category'],
-        cost: productData['cost'],
-        price: productData['price'],
-        assignedTo: productData['assignedTo'],
-        notes: productData['notes'],
-        updatedAt: DateTime.now(),
-      );
-      notifyListeners();
-    }
+  Future<void> addProduct(Product product) async {
+    await _firestore.collection(_collectionPath).add(product.toFirestore());
   }
 
-  void deleteProduct(String id) {
-    _products.removeWhere((p) => p.id == id);
-    notifyListeners();
+  Future<void> updateProduct(Product product) async {
+    await _firestore
+        .collection(_collectionPath)
+        .doc(product.id)
+        .update(product.toFirestore());
   }
 
-  Product findById(String id) {
-    return _products.firstWhere((p) => p.id == id);
+  Future<void> deleteProduct(String id) async {
+    await _firestore.collection(_collectionPath).doc(id).delete();
+  }
+
+  Future<Product> getProductById(String id) async {
+    DocumentSnapshot doc = await _firestore.collection(_collectionPath).doc(id).get();
+    return Product.fromFirestore(doc);
   }
 }

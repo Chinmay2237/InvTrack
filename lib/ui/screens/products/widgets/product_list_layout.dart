@@ -62,7 +62,7 @@ class ProductGridCard extends StatelessWidget {
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () => context.go('/products/${product.id}'),
+        onTap: () => context.go('/product-details/${product.id}'),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -125,7 +125,7 @@ class ProductListTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: ListTile(
-        onTap: () => context.go('/products/${product.id}'),
+        onTap: () => context.go('/product-details/${product.id}'),
         leading: Hero(
           tag: 'product-image-${product.id}',
           child: SizedBox(
