@@ -71,10 +71,10 @@ class ProductGridCard extends StatelessWidget {
                 tag: 'product-image-${product.id}',
                 child: Container(
                   width: double.infinity,
-                  color: theme.colorScheme.surfaceVariant.withOpacity(0.5),
-                  child: (product.imageUrl.isNotEmpty)
+                  color: theme.colorScheme.surfaceContainerHighest,
+                  child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
                       ? Image.network(
-                          product.imageUrl,
+                          product.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) => const Center(
                               child:
@@ -100,7 +100,7 @@ class ProductGridCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    product.category,
+                    product.category ?? 'No category',
                     style: theme.textTheme.bodySmall,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -131,11 +131,11 @@ class ProductListTile extends StatelessWidget {
           child: SizedBox(
             width: 50,
             height: 50,
-            child: (product.imageUrl.isNotEmpty)
+            child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: Image.network(
-                      product.imageUrl,
+                      product.imageUrl!,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => const Center(
                           child: Icon(Icons.broken_image, color: Colors.grey)),
@@ -143,7 +143,7 @@ class ProductListTile extends StatelessWidget {
                   )
                 : Container(
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Center(
@@ -153,7 +153,7 @@ class ProductListTile extends StatelessWidget {
         ),
         title: Text(product.name,
             style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(product.category),
+        subtitle: Text(product.category ?? 'No category'),
         trailing: const Icon(Icons.chevron_right),
       ),
     );

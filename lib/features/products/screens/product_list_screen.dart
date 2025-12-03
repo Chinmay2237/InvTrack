@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../models/product.dart';
 import '../providers/product_provider.dart';
+import '../widgets/product_list_item.dart';
 
-class ProductListScreen extends StatelessWidget {
+class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
+
+  @override
+  State<ProductListScreen> createState() => _ProductListScreenState();
+}
+
+class _ProductListScreenState extends State<ProductListScreen> {
+  bool _isGridView = false;
 
   @override
   Widget build(BuildContext context) {
@@ -14,35 +21,49 @@ class ProductListScreen extends StatelessWidget {
         title: const Text('Products'),
         actions: [
           IconButton(
+            icon: Icon(_isGridView ? Icons.view_list : Icons.view_module),
+            onPressed: () {
+              setState(() {
+                _isGridView = !_isGridView;
+              });
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => context.go('/products/add'),
           ),
         ],
       ),
-      body: StreamBuilder<List<Product>>(
-        stream: Provider.of<ProductProvider>(context).getProducts(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+      body: Consumer<ProductProvider>(
+        builder: (context, productProvider, child) {
+          final products = productProvider.products;
+          if (products.isEmpty) {
+            return const Center(
+              child: Text('No products found. Add one!'),
+            );
           }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No products found.'));
-          }
-
-          final products = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return ListTile(
-                title: Text(product.name),
-                subtitle: Text('Quantity: ${product.quantity}'),
-                trailing: Text('\$${product.price.toStringAsFixed(2)}'),
-                onTap: () => context.go('/products/${product.id}'),
-              );
-            },
-          );
+          return _isGridView
+              ? GridView.builder(
+                  padding: const EdgeInsets.all(8.0),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.8,
+                    crossAxisSpacing: 8.0,
+                    mainAxisSpacing: 8.0,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ProductListItem(product: product);
+                  },
+                )
+              : ListView.builder(
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ProductListItem(product: product);
+                  },
+                );
         },
       ),
     );
