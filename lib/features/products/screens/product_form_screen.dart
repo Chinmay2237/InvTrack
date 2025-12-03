@@ -28,11 +28,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
   void initState() {
     super.initState();
     if (_isEditing) {
-      final existingProduct = Provider.of<ProductProvider>(context, listen: false)
-          .getProductById(widget.productId!);
+      final existingProduct = Provider.of<ProductProvider>(context, listen: false).findById  (widget.productId!);
       _product = existingProduct.copyWith(); // Create a copy
     } else {
-      _product = Product(id: '', title: '', description: '', price: 0);
+      _product = const Product(id: '', name: '', description: '', price: 0, category: '', quantity: 0, imageUrl: '');
     }
   }
 
@@ -51,7 +50,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       _formKey.currentState!.save();
       final productProvider = Provider.of<ProductProvider>(context, listen: false);
       if (_isEditing) {
-        productProvider.updateProduct(_product);
+        productProvider.updateProduct(_product.id.toString(),_product);
       } else {
         productProvider.addProduct(_product.copyWith(id: DateTime.now().toIso8601String()));
       }
@@ -85,10 +84,10 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
               _buildImagePicker(theme),
               const SizedBox(height: 24),
               TextFormField(
-                initialValue: _product.title,
-                decoration: const InputDecoration(labelText: 'Product Title'),
-                validator: (value) => value!.isEmpty ? 'Please enter a title' : null,
-                onSaved: (value) => _product = _product.copyWith(title: value),
+                initialValue: _product.name,
+                decoration: const InputDecoration(labelText: 'Product Name'),
+                validator: (value) => value!.isEmpty ? 'Please enter a name' : null,
+                onSaved: (value) => _product = _product.copyWith(name: value),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -104,6 +103,20 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) => double.tryParse(value!) == null ? 'Invalid price' : null,
                 onSaved: (value) => _product = _product.copyWith(price: double.parse(value!)),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _product.category,
+                decoration: const InputDecoration(labelText: 'Category'),
+                onSaved: (value) => _product = _product.copyWith(category: value),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                initialValue: _product.quantity.toString(),
+                decoration: const InputDecoration(labelText: 'Quantity'),
+                keyboardType: TextInputType.number,
+                validator: (value) => int.tryParse(value!) == null ? 'Invalid quantity' : null,
+                onSaved: (value) => _product = _product.copyWith(quantity: int.parse(value!)),
               ),
             ],
           ),

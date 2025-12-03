@@ -1,104 +1,67 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
-import '../../../core/theme/app_colors.dart';
-import '../models/product.dart';
+import 'package:myapp/core/theme/app_colors.dart';
+import 'package:myapp/features/products/models/product.dart';
+import 'package:myapp/features/products/widgets/stock_status_tag.dart';
+import 'package:myapp/features/products/screens/product_detail_screen.dart';
 
 class ProductListItem extends StatelessWidget {
   final Product product;
-  final bool isListView;
 
-  const ProductListItem({super.key, required this.product, this.isListView = false});
+  const ProductListItem({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final Widget image = Hero(
-      tag: 'product-image-${product.id}',
-      child: ClipRRect(
-        borderRadius: isListView 
-            ? BorderRadius.circular(12.0)
-            : const BorderRadius.vertical(top: Radius.circular(16.0)),
-        child: CachedNetworkImage(
-          imageUrl: product.imageUrl ?? '',
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
-            child: Container(color: Colors.white),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ProductDetailScreen(productId: product.id),
           ),
-          errorWidget: (context, url, error) => Container(
-            color: theme.colorScheme.surface,
-            child: const Center(
-              child: Icon(Icons.broken_image_rounded, size: 40, color: AppColors.lightTextSecondary),
-            ),
-          ),
-        ),
-      ),
-    );
-
-    final Widget content = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          product.name,
-          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
-          maxLines: isListView ? 2 : 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        if (isListView) const SizedBox(height: 4.0),
-        if (isListView)
-          Text(
-            product.description,
-            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withAlpha(178)),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        const SizedBox(height: 8.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '\$${product.price.toStringAsFixed(2)}',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
-              ),
-            ),
-            Text(
-              'Qty: ${product.quantity}',
-              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withAlpha(178)),
-            ),
-          ],
-        ),
-      ],
-    );
-
-    if (isListView) {
-      return _buildListViewItem(context, image, content);
-    } else {
-      return _buildGridViewItem(context, image, content);
-    }
-  }
-
-  Widget _buildGridViewItem(BuildContext context, Widget image, Widget content) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-      child: InkWell(
-        onTap: () => context.go('/products/${product.id}'),
-        borderRadius: BorderRadius.circular(16.0),
+        );
+      },
+      child: Card(
+        elevation: 6,
+        shadowColor: AppColors.primary.withOpacity(0.2),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 3, child: image),
             Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: content,
+              child: _buildImage(context),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    product.category,
+                    style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${product.price.toStringAsFixed(2)}',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      StockStatusTag(quantity: product.quantity),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
@@ -107,23 +70,51 @@ class ProductListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildListViewItem(BuildContext context, Widget image, Widget content) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
-      child: InkWell(
-        onTap: () => context.go('/products/${product.id}'),
-        borderRadius: BorderRadius.circular(12.0),
-        child: Row(
-          children: [
-            SizedBox(width: 120, height: 120, child: image),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: content,
+  Widget _buildImage(BuildContext context) {
+    return Hero(
+      tag: 'productImage${product.id}',
+      child: Stack(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.network(
+              product.imageUrl,
+              height: 150,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  height: 150,
+                  color: Colors.grey[200],
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                          : null,
+                    ),
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 150,
+                color: Colors.grey[200],
+                child: const Icon(Icons.broken_image, color: Colors.grey, size: 40),
               ),
             ),
-          ],
-        ),
+          ),
+          if (product.isLowStock)
+            Positioned(
+              top: 8,
+              left: 8,
+              child: Chip(
+                label: const Text('Low Stock'),
+                backgroundColor: AppColors.lowStock.withOpacity(0.8),
+                labelStyle: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                padding: const EdgeInsets.all(4),
+              ),
+            ),
+        ],
       ),
     );
   }

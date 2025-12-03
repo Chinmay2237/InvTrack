@@ -1,30 +1,26 @@
 import 'package:flutter/foundation.dart';
 
-class Product with ChangeNotifier {
+class Product {
   final String id;
   final String name;
   final String description;
   final double price;
-  final String? imageUrl;
+  final String imageUrl;
   final String category;
   final int quantity;
-  bool isFavorite;
 
-  Product({
+  const Product({
     required this.id,
     required this.name,
     required this.description,
     required this.price,
-    this.imageUrl,
+    required this.imageUrl,
     required this.category,
     required this.quantity,
-    this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
-    isFavorite = !isFavorite;
-    notifyListeners();
-  }
+  // Getter for low stock status
+  bool get isLowStock => quantity > 0 && quantity <= 10;
 
   Product copyWith({
     String? id,
@@ -34,7 +30,6 @@ class Product with ChangeNotifier {
     String? imageUrl,
     String? category,
     int? quantity,
-    bool? isFavorite,
   }) {
     return Product(
       id: id ?? this.id,
@@ -44,7 +39,6 @@ class Product with ChangeNotifier {
       imageUrl: imageUrl ?? this.imageUrl,
       category: category ?? this.category,
       quantity: quantity ?? this.quantity,
-      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
@@ -57,20 +51,18 @@ class Product with ChangeNotifier {
       'imageUrl': imageUrl,
       'category': category,
       'quantity': quantity,
-      'isFavorite': isFavorite,
     };
   }
 
-  factory Product.fromMap(Map<String, dynamic> map) {
+  factory Product.fromMap(Map<String, dynamic> map, String documentId) {
     return Product(
-      id: map['id'],
-      name: map['name'],
-      description: map['description'],
-      price: map['price'],
-      imageUrl: map['imageUrl'],
-      category: map['category'],
-      quantity: map['quantity'],
-      isFavorite: map['isFavorite'],
+      id: documentId,
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
+      price: (map['price'] as num?)?.toDouble() ?? 0.0,
+      imageUrl: map['imageUrl'] ?? '',
+      category: map['category'] ?? '',
+      quantity: (map['quantity'] as num?)?.toInt() ?? 0,
     );
   }
 }

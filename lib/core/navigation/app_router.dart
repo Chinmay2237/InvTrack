@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
+import '../../features/auth/providers/auth_provider.dart';
 import '../../features/auth/screens/auth_screen.dart';
-import '../../features/orders/screens/order_screen.dart';
+import '../../features/products/screens/edit_product_screen.dart';
 import '../../features/products/screens/product_detail_screen.dart';
 import '../../features/products/screens/products_overview_screen.dart';
-import '../../features/profile/screens/profile_screen.dart';
-import '../../features/search/screens/search_screen.dart';
-import '../../features/wishlist/screens/wishlist_screen.dart';
+import '../../features/products/screens/user_products_screen.dart';
 
 class AppRouter {
-  static final GoRouter router = GoRouter(
+  final AuthProvider authProvider;
+
+  AppRouter(this.authProvider);
+
+  late final GoRouter router = GoRouter(
+    refreshListenable: authProvider,
     routes: [
       GoRoute(
         path: '/',
@@ -25,41 +30,31 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithFadeTransition(
           context,
           state,
-          ProductDetailScreen(productId: state.pathParameters['id']!),
+          ProductDetailScreen(productId: state.pathParameters['id']!,),
         ),
       ),
+      
+     
       GoRoute(
-        path: '/orders',
+        path: '/user-products',
         pageBuilder: (context, state) => _buildPageWithFadeTransition(
           context,
           state,
-          const OrderScreen(),
+          const UserProductsScreen(),
         ),
       ),
       GoRoute(
-        path: '/wishlist',
-        pageBuilder: (context, state) => _buildPageWithFadeTransition(
-          context,
-          state,
-          const WishlistScreen(),
-        ),
+        path: '/edit-product',
+        pageBuilder: (context, state) {
+          final productId = state.uri.queryParameters['id'];
+          return _buildPageWithFadeTransition(
+            context,
+            state,
+            EditProductScreen(productId: productId),
+          );
+        },
       ),
-      GoRoute(
-        path: '/search',
-        pageBuilder: (context, state) => _buildPageWithFadeTransition(
-          context,
-          state,
-          const SearchScreen(),
-        ),
-      ),
-      GoRoute(
-        path: '/profile',
-        pageBuilder: (context, state) => _buildPageWithFadeTransition(
-          context,
-          state,
-          const ProfileScreen(),
-        ),
-      ),
+    
       GoRoute(
         path: '/auth',
         pageBuilder: (context, state) => _buildPageWithFadeTransition(

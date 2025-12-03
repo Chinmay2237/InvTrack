@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../features/products/models/product.dart';
 import '../../../../features/products/providers/product_provider.dart';
-import '../../../../features/products/widgets/product_item.dart';
+import '../../../../features/products/widgets/product_list_item.dart';
 
 class ProductListLayout extends StatelessWidget {
   final bool isGridView;
@@ -19,8 +19,8 @@ class ProductListLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    final products = productProvider.products.where((p) {
-      return p.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+    final products = productProvider.items.where((p) {
+      return p.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
           p.description.toLowerCase().contains(searchQuery.toLowerCase());
     }).toList();
 
@@ -34,14 +34,14 @@ class ProductListLayout extends StatelessWidget {
               const SizedBox(height: 24),
               Text(
                 searchQuery.isEmpty ? 'No Products Yet' : 'No Results Found',
-                style: Theme.of(context).textTheme.headline6,
+                style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 searchQuery.isEmpty
                     ? 'Tap \'+\' to add your first product.'
                     : 'Try a different search term.',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.displaySmall,
                 textAlign: TextAlign.center,
               ),
             ],
@@ -73,7 +73,7 @@ class ProductListLayout extends StatelessWidget {
               columnCount: (MediaQuery.of(context).size.width / 300).floor(),
               child: ScaleAnimation(
                 child: FadeInAnimation(
-                  child: ProductItem(product: products[index]),
+                  child: ProductListItem(product: products[index]),
                 ),
               ),
             );
@@ -97,7 +97,7 @@ class ProductListLayout extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 8.0),
-                  child: ProductItem(product: products[index], isListItem: true),
+                  child: ProductListItem(product: products[index],),
                 ),
               ),
             ),

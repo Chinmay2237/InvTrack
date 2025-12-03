@@ -1,24 +1,61 @@
-# Project Blueprint
+# Inventory Management App Blueprint
 
 ## Overview
 
-This is a Flutter inventory management application that allows users to manage their products.
+This document outlines the structure, features, and design of the Inventory Management application. The app is built with Flutter and follows modern design principles to provide a clean, intuitive, and efficient user experience.
 
 ## Features
 
-* **Product Listing:** View a list of available products.
-* **Product Detail:** View detailed information for a single product.
-* **Product Management:** Add, edit, and delete products.
-* **Wishlist:** Add and remove products from a wishlist.
+### Core
 
-## Style and Design
+- **Dashboard:** A central hub providing a quick overview of inventory status.
+- **Product Management:** Add, edit, and delete products with details like name, category, price, and quantity.
+- **Settings:** Configure application settings, including theme and data management.
 
-* **Theme:** The application uses a Material 3 theme with a purple color scheme.
-* **Typography:** The app uses the default Material 3 typography.
-* **Layout:** The app uses a combination of `ListView`, `GridView`, and `CustomScrollView` to display content.
+### Key Features
 
-## Current Plan
+- **Theme Management:** Switch between light, dark, and system themes.
+- **Search and Filter:** Easily find products with a powerful search and filtering system.
+- **Modern UI:** A visually appealing and user-friendly interface with card-based layouts and smooth animations.
+- **Responsive Design:** The app is designed to work seamlessly on various screen sizes.
 
-- [x] Remove the shopping cart feature.
-- [x] Add a wishlist feature.
-- [ ] Update the UI to be more visually appealing.
+## Project Structure
+
+```
+lib
+├── core
+│   ├── theme
+│   │   ├── app_colors.dart
+│   │   ├── app_theme.dart
+│   │   └── theme_provider.dart
+│   └── utils
+│       └── helpers.dart
+├── features
+│   ├── dashboard
+│   │   ├── screens
+│   │   │   └── dashboard_screen.dart
+│   │   └── widgets
+│   │       ├── dashboard_stats.dart
+│   │       ├── product_carousel.dart
+│   │       └── quick_actions_grid.dart
+│   ├── products
+│   │   ├── models
+│   │   │   ├── product.dart
+│   │   │   └── stock_filter.dart
+│   │   ├── providers
+│   │   │   └── product_provider.dart
+│   │   ├── screens
+│   │   │   ├── edit_product_screen.dart
+│   │   │   ├── product_detail_screen.dart
+│   │   │   └── user_products_screen.dart
+│   │   └── widgets
+│   │       ├── product_list_item.dart
+│   │       └── stock_status_tag.dart
+│   └── settings
+│       └── screens
+│           └── settings_screen.dart
+├── shared
+│   └── widgets
+│       └── bottom_nav_bar.dart
+└── main.dart
+```
