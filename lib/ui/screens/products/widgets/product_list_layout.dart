@@ -1,160 +1,109 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../features/products/models/product.dart';
+import '../../../../features/products/providers/product_provider.dart';
+import '../../../../features/products/widgets/product_item.dart';
 
 class ProductListLayout extends StatelessWidget {
-  final List<Product> products;
   final bool isGridView;
+  final String searchQuery;
 
   const ProductListLayout({
     super.key,
-    required this.products,
     required this.isGridView,
+    required this.searchQuery,
   });
 
   @override
   Widget build(BuildContext context) {
+    final productProvider = Provider.of<ProductProvider>(context);
+    final products = productProvider.products.where((p) {
+      return p.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          p.description.toLowerCase().contains(searchQuery.toLowerCase());
+    }).toList();
+
     if (products.isEmpty) {
-      return const Center(
-        child: Text('No products found.'),
-      );
-    }
-    
-    if (isGridView) {
-      return GridView.builder(
-        padding: const EdgeInsets.all(12),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
+      return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey),
+              const SizedBox(height: 24),
+              Text(
+                searchQuery.isEmpty ? 'No Products Yet' : 'No Results Found',
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                searchQuery.isEmpty
+                    ? 'Tap \'+\' to add your first product.'
+                    : 'Try a different search term.',
+                style: Theme.of(context).textTheme.bodyText2,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ProductGridCard(product: product);
-        },
-      );
-    } else {
-      return ListView.builder(
-        padding: const EdgeInsets.all(8),
-        itemCount: products.length,
-        itemBuilder: (context, index) {
-          final product = products[index];
-          return ProductListTile(product: product);
-        },
       );
     }
+
+    return isGridView
+        ? _buildGridView(context, products)
+        : _buildListView(context, products);
   }
-}
 
-class ProductGridCard extends StatelessWidget {
-  final Product product;
-
-  const ProductGridCard({super.key, required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () => context.go('/product-details/${product.id}'),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Hero(
-                tag: 'product-image-${product.id}',
-                child: Container(
-                  width: double.infinity,
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
-                      ? Image.network(
-                          product.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Center(
-                              child:
-                                  Icon(Icons.broken_image, color: Colors.grey)),
-                        )
-                      : const Center(
-                          child: Icon(Icons.inventory_2_outlined,
-                              size: 48, color: Colors.grey)),
+  Widget _buildGridView(BuildContext context, List<Product> products) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(16.0),
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 300.0,
+          mainAxisSpacing: 16.0,
+          crossAxisSpacing: 16.0,
+          childAspectRatio: 0.8,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return AnimationConfiguration.staggeredGrid(
+              position: index,
+              duration: const Duration(milliseconds: 375),
+              columnCount: (MediaQuery.of(context).size.width / 300).floor(),
+              child: ScaleAnimation(
+                child: FadeInAnimation(
+                  child: ProductItem(product: products[index]),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    product.category ?? 'No category',
-                    style: theme.textTheme.bodySmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            );
+          },
+          childCount: products.length,
         ),
       ),
     );
   }
-}
 
-class ProductListTile extends StatelessWidget {
-  final Product product;
-
-  const ProductListTile({super.key, required this.product});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      child: ListTile(
-        onTap: () => context.go('/product-details/${product.id}'),
-        leading: Hero(
-          tag: 'product-image-${product.id}',
-          child: SizedBox(
-            width: 50,
-            height: 50,
-            child: (product.imageUrl != null && product.imageUrl!.isNotEmpty)
-                ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.network(
-                      product.imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => const Center(
-                          child: Icon(Icons.broken_image, color: Colors.grey)),
-                    ),
-                  )
-                : Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                        child: Icon(Icons.inventory_2_outlined,
-                            color: Colors.grey))),
-          ),
-        ),
-        title: Text(product.name,
-            style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(product.category ?? 'No category'),
-        trailing: const Icon(Icons.chevron_right),
+  Widget _buildListView(BuildContext context, List<Product> products) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          return AnimationConfiguration.staggeredList(
+            position: index,
+            duration: const Duration(milliseconds: 375),
+            child: SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 8.0),
+                  child: ProductItem(product: products[index], isListItem: true),
+                ),
+              ),
+            ),
+          );
+        },
+        childCount: products.length,
       ),
     );
   }

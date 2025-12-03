@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import '../providers/product_provider.dart';
-import '../widgets/product_list_item.dart';
+
+import '../../../ui/screens/products/widgets/product_list_layout.dart';
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -12,59 +11,53 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
-  bool _isGridView = false;
+  bool _isGridView = true;
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-        actions: [
-          IconButton(
-            icon: Icon(_isGridView ? Icons.view_list : Icons.view_module),
-            onPressed: () {
-              setState(() {
-                _isGridView = !_isGridView;
-              });
-            },
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            floating: true,
+            pinned: true,
+            title: const Text('Inventory'),
+            actions: [
+              IconButton(
+                icon: Icon(_isGridView ? Icons.view_list : Icons.grid_view),
+                onPressed: () {
+                  setState(() {
+                    _isGridView = !_isGridView;
+                  });
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () => context.go('/add-product'),
+              ),
+            ],
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(60.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: SearchBar(
+                  leading: const Icon(Icons.search),
+                  hintText: 'Search products...',
+                  onChanged: (query) {
+                    setState(() {
+                      _searchQuery = query;
+                    });
+                  },
+                ),
+              ),
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => context.go('/products/add'),
+          ProductListLayout(
+            isGridView: _isGridView,
+            searchQuery: _searchQuery,
           ),
         ],
-      ),
-      body: Consumer<ProductProvider>(
-        builder: (context, productProvider, child) {
-          final products = productProvider.products;
-          if (products.isEmpty) {
-            return const Center(
-              child: Text('No products found. Add one!'),
-            );
-          }
-          return _isGridView
-              ? GridView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.8,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ProductListItem(product: product);
-                  },
-                )
-              : ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ProductListItem(product: product);
-                  },
-                );
-        },
       ),
     );
   }
