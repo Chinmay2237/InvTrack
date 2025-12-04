@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/core/theme/app_colors.dart';
 
-enum StockStatus { inStock, outOfStock, lowStock }
+enum StockStatus { inStock, lowStock, outOfStock }
 
 class StockStatusTag extends StatelessWidget {
   final StockStatus status;
@@ -11,45 +10,30 @@ class StockStatusTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final Color color;
-    final String text;
+    final String label;
 
     switch (status) {
       case StockStatus.inStock:
-        color = AppColors.inStock;
-        text = 'In Stock';
-        break;
-      case StockStatus.outOfStock:
-        color = AppColors.outOfStock;
-        text = 'Out of Stock';
+        color = theme.colorScheme.secondary; // A positive, secondary color
+        label = 'In Stock ($quantity)';
         break;
       case StockStatus.lowStock:
-        color = AppColors.lowStock;
-        text = 'Low Stock';
+        color = Colors.orange; // A cautionary color
+        label = 'Low Stock ($quantity)';
+        break;
+      case StockStatus.outOfStock:
+        color = theme.colorScheme.error; // An error/alert color
+        label = 'Out of Stock';
         break;
     }
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.circle, color: color, size: 10),
-          const SizedBox(width: 6),
-          Text(
-            '$text ($quantity)',
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
+    return Chip(
+      label: Text(label, style: theme.textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+      backgroundColor: color,
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
     );
   }
 }

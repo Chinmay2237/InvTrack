@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:myapp/core/theme/app_colors.dart';
-import 'package:myapp/core/theme/app_text.dart';
 
 class ImagePickerWidget extends StatefulWidget {
   final Function(File?) onImagePicked;

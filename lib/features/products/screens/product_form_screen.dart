@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../core/widgets/dotted_border.dart';
+import 'package:dotted_border/dotted_border.dart';
+
 import '../providers/product_provider.dart';
 import '../models/product.dart';
 
@@ -83,37 +84,38 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             children: [
               _buildImagePicker(theme),
               const SizedBox(height: 24),
-              TextFormField(
+              _buildTextFormField(
                 initialValue: _product.name,
-                decoration: const InputDecoration(labelText: 'Product Name'),
+                labelText: 'Product Name',
                 validator: (value) => value!.isEmpty ? 'Please enter a name' : null,
                 onSaved: (value) => _product = _product.copyWith(name: value),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextFormField(
                 initialValue: _product.description,
-                decoration: const InputDecoration(labelText: 'Description'),
+                labelText: 'Description',
                 maxLines: 3,
                 onSaved: (value) => _product = _product.copyWith(description: value),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextFormField(
                 initialValue: _product.price.toString(),
-                decoration: const InputDecoration(labelText: 'Price', prefixText: '\$'),
+                labelText: 'Price',
+                prefixText: '\$',
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) => double.tryParse(value!) == null ? 'Invalid price' : null,
                 onSaved: (value) => _product = _product.copyWith(price: double.parse(value!)),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextFormField(
                 initialValue: _product.category,
-                decoration: const InputDecoration(labelText: 'Category'),
+                labelText: 'Category',
                 onSaved: (value) => _product = _product.copyWith(category: value),
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              _buildTextFormField(
                 initialValue: _product.quantity.toString(),
-                decoration: const InputDecoration(labelText: 'Quantity'),
+                labelText: 'Quantity',
                 keyboardType: TextInputType.number,
                 validator: (value) => int.tryParse(value!) == null ? 'Invalid quantity' : null,
                 onSaved: (value) => _product = _product.copyWith(quantity: int.parse(value!)),
@@ -132,14 +134,14 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
         color: theme.colorScheme.onSurface.withAlpha(102),
         strokeWidth: 2,
         dashPattern: const [8, 4],
-        borderType: BorderType.rRect,
+        borderType: BorderType.RRect,
         radius: const Radius.circular(12),
         child: Container(
           height: 200,
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: theme.colorScheme.surface,
+            color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
           ),
           child: _imageFile != null || (_isEditing && _product.imageUrl.isNotEmpty)
               ? ClipRRect(
@@ -160,6 +162,29 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
                 ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextFormField({
+    String? initialValue,
+    required String labelText,
+    String? prefixText,
+    int? maxLines,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+    void Function(String?)? onSaved,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixText: prefixText,
+        border: const OutlineInputBorder(),
+      ),
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: validator,
+      onSaved: onSaved,
     );
   }
 }

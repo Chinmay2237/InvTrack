@@ -4,8 +4,6 @@ import 'dart:io';
 
 import 'package:myapp/features/products/models/product.dart';
 import 'package:myapp/features/products/providers/product_provider.dart';
-import 'package:myapp/features/products/widgets/image_picker_widget.dart';
-import 'package:myapp/core/widgets/ui_helper.dart';
 
 class EditProductScreen extends StatefulWidget {
   final String? productId;
@@ -84,8 +82,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.productId == null ? 'Add Product' : 'Edit Product'),
@@ -99,116 +95,94 @@ class _EditProductScreenState extends State<EditProductScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(24.0),
               child: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      ImagePickerWidget(
-                        initialImageUrl: _editedProduct.imageUrl,
-                        onImagePicked: (image) {
-                          _pickedImage = image;
-                        },
-                      ),
-                      UIHelper.verticalSpaceMedium,
-                      TextFormField(
+                      const SizedBox(height: 24),
+                      _buildTextFormField(
                         initialValue: _editedProduct.name,
-                        decoration: const InputDecoration(labelText: 'Name'),
-                        textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please provide a name.';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          _editedProduct = _editedProduct.copyWith(name: value);
-                        },
+                        labelText: 'Name',
+                        validator: (value) => (value == null || value.isEmpty) ? 'Please provide a name.' : null,
+                        onSaved: (value) => _editedProduct = _editedProduct.copyWith(name: value),
                       ),
-                      UIHelper.verticalSpaceMedium,
-                      TextFormField(
+                      const SizedBox(height: 16),
+                      _buildTextFormField(
                         initialValue: _editedProduct.category,
-                        decoration: const InputDecoration(labelText: 'Category'),
-                        textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please provide a category.';
-                          }
-                          return null;
-                        },
-                        onSaved: (value) {
-                          _editedProduct = _editedProduct.copyWith(category: value);
-                        },
+                        labelText: 'Category',
+                        validator: (value) => (value == null || value.isEmpty) ? 'Please provide a category.' : null,
+                        onSaved: (value) => _editedProduct = _editedProduct.copyWith(category: value),
                       ),
-                      UIHelper.verticalSpaceMedium,
-                      TextFormField(
+                      const SizedBox(height: 16),
+                      _buildTextFormField(
                         initialValue: _editedProduct.price.toString(),
-                        decoration: const InputDecoration(labelText: 'Price'),
-                        textInputAction: TextInputAction.next,
+                        labelText: 'Price',
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a price.';
-                          }
-                          if (double.tryParse(value) == null) {
-                            return 'Please enter a valid number.';
-                          }
-                          if (double.parse(value) <= 0) {
-                            return 'Please enter a number greater than zero.';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter a price.';
+                          if (double.tryParse(value) == null) return 'Please enter a valid number.';
+                          if (double.parse(value) <= 0) return 'Please enter a number greater than zero.';
                           return null;
                         },
-                        onSaved: (value) {
-                          _editedProduct = _editedProduct.copyWith(price: double.parse(value!));
-                        },
+                        onSaved: (value) => _editedProduct = _editedProduct.copyWith(price: double.parse(value!)),
                       ),
-                      UIHelper.verticalSpaceMedium,
-                      TextFormField(
+                      const SizedBox(height: 16),
+                      _buildTextFormField(
                         initialValue: _editedProduct.quantity.toString(),
-                        decoration: const InputDecoration(labelText: 'Quantity'),
-                        textInputAction: TextInputAction.next,
+                        labelText: 'Quantity',
                         keyboardType: TextInputType.number,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a quantity.';
-                          }
-                          if (int.tryParse(value) == null) {
-                            return 'Please enter a valid integer.';
-                          }
-                          if (int.parse(value) < 0) {
-                            return 'Please enter a non-negative number.';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter a quantity.';
+                          if (int.tryParse(value) == null) return 'Please enter a valid integer.';
+                          if (int.parse(value) < 0) return 'Please enter a non-negative number.';
                           return null;
                         },
-                        onSaved: (value) {
-                          _editedProduct = _editedProduct.copyWith(quantity: int.parse(value!));
-                        },
+                        onSaved: (value) => _editedProduct = _editedProduct.copyWith(quantity: int.parse(value!)),
                       ),
-                      UIHelper.verticalSpaceMedium,
-                      TextFormField(
+                      const SizedBox(height: 16),
+                      _buildTextFormField(
                         initialValue: _editedProduct.description,
-                        decoration: const InputDecoration(labelText: 'Description'),
+                        labelText: 'Description',
                         maxLines: 3,
                         keyboardType: TextInputType.multiline,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a description.';
-                          }
-                          if (value.length < 10) {
-                            return 'Should be at least 10 characters long.';
-                          }
+                          if (value == null || value.isEmpty) return 'Please enter a description.';
+                          if (value.length < 10) return 'Should be at least 10 characters long.';
                           return null;
                         },
-                        onSaved: (value) {
-                          _editedProduct = _editedProduct.copyWith(description: value);
-                        },
+                        onSaved: (value) => _editedProduct = _editedProduct.copyWith(description: value),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildTextFormField({
+    required String labelText,
+    String? initialValue,
+    String? Function(String?)? validator,
+    void Function(String?)? onSaved,
+    TextInputType? keyboardType,
+    int? maxLines = 1,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      decoration: InputDecoration(
+        labelText: labelText,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      ),
+      keyboardType: keyboardType,
+      maxLines: maxLines,
+      validator: validator,
+      onSaved: onSaved,
+      textInputAction: maxLines == 1 ? TextInputAction.next : TextInputAction.done,
     );
   }
 }

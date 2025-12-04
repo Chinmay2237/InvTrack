@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:myapp/core/theme/app_colors.dart';
 
 class AssignmentBarChart extends StatelessWidget {
   final int assignedCount;
@@ -14,24 +13,22 @@ class AssignmentBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final assignedColor = theme.colorScheme.primary;
+    final unassignedColor = theme.colorScheme.secondary;
+
     return BarChart(
       BarChartData(
         alignment: BarChartAlignment.spaceAround,
-        maxY: (assignedCount + unassignedCount) * 1.2,
+        maxY: (assignedCount + unassignedCount) * 1.4, // Increased maxY for better spacing
         barTouchData: BarTouchData(
           enabled: true,
           touchTooltipData: BarTouchTooltipData(
-            // tooltipBgColor: Colors.blueGrey,
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              String label;
-              if (groupIndex == 0) {
-                label = 'Assigned';
-              } else {
-                label = 'Unassigned';
-              }
+              final label = groupIndex == 0 ? 'Assigned' : 'Unassigned';
               return BarTooltipItem(
                 '$label\n${rod.toY.round()}',
-                const TextStyle(color: Colors.white),
+                TextStyle(color: theme.colorScheme.onPrimary, fontWeight: FontWeight.bold),
               );
             },
           ),
@@ -41,8 +38,8 @@ class AssignmentBarChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              getTitlesWidget: (double value, TitleMeta meta) {
-                const style = TextStyle(fontWeight: FontWeight.bold, fontSize: 14);
+              getTitlesWidget: (double value, TitleMeta title) {
+                final style = theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold);
                 String text;
                 if (value.toInt() == 0) {
                   text = 'Assigned';
@@ -51,10 +48,13 @@ class AssignmentBarChart extends StatelessWidget {
                 } else {
                   return Container();
                 }
-                return SideTitleWidget(meta: meta,
-                child: Text(text, style: style));
+                return SideTitleWidget(
+                  axisSide: title.axisSide,
+                  space: 4,
+                  child: Text(text, style: style),
+                );
               },
-              reservedSize: 32,
+              reservedSize: 30,
             ),
           ),
           leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -63,8 +63,8 @@ class AssignmentBarChart extends StatelessWidget {
         ),
         borderData: FlBorderData(show: false),
         barGroups: [
-          _buildBarGroupData(0, assignedCount.toDouble(), AppColors.primary),
-          _buildBarGroupData(1, unassignedCount.toDouble(), AppColors.lowStock),
+          _buildBarGroupData(0, assignedCount.toDouble(), assignedColor),
+          _buildBarGroupData(1, unassignedCount.toDouble(), unassignedColor),
         ],
         gridData: const FlGridData(show: false),
       ),
@@ -78,8 +78,11 @@ class AssignmentBarChart extends StatelessWidget {
         BarChartRodData(
           toY: y,
           color: color,
-          width: 22,
-          borderRadius: BorderRadius.circular(6),
+          width: 25, // Slightly wider bars
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(6),
+            topRight: Radius.circular(6),
+          ),
         ),
       ],
     );

@@ -1,54 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/features/dashboard/screens/dashboard_screen.dart';
-import 'package:myapp/features/products/screens/user_products_screen.dart';
-import 'package:myapp/features/assign/screens/handover_screen.dart';
-import 'package:myapp/core/theme/app_colors.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Widget child;
+
+  const HomeScreen({super.key, required this.child});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-  final List<Widget> _screens = [
-    const DashboardScreen(),
-    const UserProductsScreen(),
-    const HandoversScreen(),
-  ];
+  int _calculateSelectedIndex(BuildContext context) {
+    final String location = GoRouterState.of(context).uri.toString();
+    if (location.startsWith('/products')) {
+      return 1;
+    }
+    if (location.startsWith('/add-product')) {
+      return 1;
+    }
+    if (location.startsWith('/settings')) {
+      return 2;
+    }
+    return 0;
+  }
 
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+  void _onItemTapped(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        context.go('/');
+        break;
+      case 1:
+        context.go('/products');
+        break;
+      case 2:
+        context.go('/settings');
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.grey,
-        items: const [
-          BottomNavigationBarItem(
+      body: widget.child,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _calculateSelectedIndex(context),
+        onDestinationSelected: (index) => _onItemTapped(index, context),
+        destinations: const [
+          NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
+            selectedIcon: Icon(Icons.dashboard_rounded),
             label: 'Dashboard',
           ),
-          BottomNavigationBarItem(
+          NavigationDestination(
             icon: Icon(Icons.inventory_2_outlined),
+            selectedIcon: Icon(Icons.inventory_2_rounded),
             label: 'Products',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.assignment_turned_in_outlined),
-            label: 'Handovers',
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings_rounded),
+            label: 'Settings',
           ),
         ],
       ),

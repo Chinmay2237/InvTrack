@@ -4,6 +4,8 @@
 
 This document outlines the structure, features, and design of the Inventory Management application. The app is designed to help businesses track their assets, including assigning them to employees and monitoring their status.
 
+This application has recently undergone a significant refactoring to modernize its UI and improve code quality. The old, deprecated theme and widget files have been removed and replaced with a modern, theme-based approach. This has resulted in a more consistent and visually appealing design.
+
 ## Features
 
 ### Core Features
@@ -48,11 +50,5 @@ This document outlines the structure, features, and design of the Inventory Mana
 
 ## Current Plan
 
-*   **Task:** Implement a comprehensive asset history feature.
-*   **Steps:**
-    1.  **Update Data Models:** Create a new `AssignmentHistory` model and a `HandoverType` enum.
-    2.  **Refine Terminology:** Replace all instances of "borrowing" with "handover."
-    3.  **Enhance the UI:**
-        *   Add an animated "Handover History" section to the Product Detail Screen.
-        *   Rename the "Assigned" tab to "Handovers."
-
+*   **Task:** Complete the UI refactoring.
+*   **Status:** The UI refactoring is complete. All screens have been updated to use the new, theme-based design system.

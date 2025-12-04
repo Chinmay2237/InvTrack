@@ -1,51 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
-import '../../../../features/products/models/product.dart';
-import '../../../../features/products/providers/product_provider.dart';
-import '../../../../features/products/widgets/product_list_item.dart';
+import 'package:myapp/features/products/models/product.dart';
+import 'package:myapp/features/products/providers/product_provider.dart';
+import 'package:myapp/ui/widgets/empty_state.dart';
 
 class ProductListLayout extends StatelessWidget {
   final bool isGridView;
   final String searchQuery;
+  final String category;
 
   const ProductListLayout({
     super.key,
     required this.isGridView,
     required this.searchQuery,
+    required this.category,
   });
 
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
     final products = productProvider.items.where((p) {
-      return p.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().contains(searchQuery.toLowerCase());
+      final matchesSearch = p.name.toLowerCase().contains(searchQuery.toLowerCase());
+      final matchesCategory = category == 'All' || p.category == category;
+      return matchesSearch && matchesCategory;
     }).toList();
 
     if (products.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.inventory_2_outlined, size: 80, color: Colors.grey),
-              const SizedBox(height: 24),
-              Text(
-                searchQuery.isEmpty ? 'No Products Yet' : 'No Results Found',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                searchQuery.isEmpty
-                    ? 'Tap \'+\' to add your first product.'
-                    : 'Try a different search term.',
-                style: Theme.of(context).textTheme.displaySmall,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+      return const SliverFillRemaining(
+        child: EmptyState(
+          icon: Icons.search_off_rounded,
+          message: 'No products found.',
+          suggestion: 'Try a different search or filter.',
         ),
       );
     }
@@ -56,11 +44,12 @@ class ProductListLayout extends StatelessWidget {
   }
 
   Widget _buildGridView(BuildContext context, List<Product> products) {
+    final crossAxisCount = (MediaQuery.of(context).size.width / 200).floor();
     return SliverPadding(
       padding: const EdgeInsets.all(16.0),
       sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 300.0,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
           mainAxisSpacing: 16.0,
           crossAxisSpacing: 16.0,
           childAspectRatio: 0.8,
@@ -70,15 +59,61 @@ class ProductListLayout extends StatelessWidget {
             return AnimationConfiguration.staggeredGrid(
               position: index,
               duration: const Duration(milliseconds: 375),
-              columnCount: (MediaQuery.of(context).size.width / 300).floor(),
+              columnCount: crossAxisCount,
               child: ScaleAnimation(
                 child: FadeInAnimation(
-                  child: ProductListItem(product: products[index]),
+                  child: _buildProductGridItem(context, products[index]),
                 ),
               ),
             );
           },
           childCount: products.length,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductGridItem(BuildContext context, Product product) {
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        onTap: () => context.go('/product/${product.id}'),
+        child: Stack(
+          children: [
+            Hero(
+              tag: 'productImage${product.id}',
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) => const Center(child: Icon(Icons.broken_image, size: 50)),
+              ),
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(product.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                    Text('\$${product.price.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70)),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -95,15 +130,39 @@ class ProductListLayout extends StatelessWidget {
               verticalOffset: 50.0,
               child: FadeInAnimation(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0, vertical: 8.0),
-                  child: ProductListItem(product: products[index],),
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: _buildProductListItem(context, products[index]),
                 ),
               ),
             ),
           );
         },
         childCount: products.length,
+      ),
+    );
+  }
+
+  Widget _buildProductListItem(BuildContext context, Product product) {
+    return Card(
+      child: ListTile(
+        onTap: () => context.go('/product/${product.id}'),
+        leading: Hero(
+          tag: 'productImage${product.id}',
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(product.imageUrl),
+            onBackgroundImageError: (exception, stackTrace) => const Icon(Icons.image),
+          ),
+        ),
+        title: Text(product.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(product.category),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text('\$${product.price.toStringAsFixed(2)}'),
+            Text('Qty: ${product.quantity}'),
+          ],
+        ),
       ),
     );
   }
