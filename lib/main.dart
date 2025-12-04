@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
+import 'features/assign/providers/assign_provider.dart';
 import 'providers/theme_provider.dart';
 import 'features/products/providers/product_provider.dart';
 
@@ -11,6 +12,9 @@ import 'features/products/screens/products_overview_screen.dart';
 import 'features/products/screens/product_detail_screen.dart';
 import 'features/products/screens/product_form_screen.dart';
 import 'features/settings/screens/settings_screen.dart';
+import 'features/assign/screens/assigns_screen.dart';
+import 'features/assign/screens/assign_form_screen.dart';
+import 'features/assign/screens/assigned_items_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,6 +29,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => AssignProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -89,6 +94,20 @@ final _router = GoRouter(
                   builder: (context, state) => ProductFormScreen(productId: state.pathParameters['id']!),
                 ),
               ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: 'assign',
+          builder: (context, state) => const AssignsScreen(),
+          routes: [
+            GoRoute(
+              path: 'new',
+              builder: (context, state) => const AssignFormScreen(),
+            ),
+            GoRoute(
+              path: 'items',
+              builder: (context, state) => const AssignedItemsScreen(),
             ),
           ],
         ),
