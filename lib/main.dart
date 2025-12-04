@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 
@@ -54,7 +53,7 @@ ThemeData _buildTheme(BuildContext context, Brightness brightness) {
   );
 
   return baseTheme.copyWith(
-    textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme),
+    textTheme: baseTheme.textTheme.apply(fontFamily: 'Poppins'),
     appBarTheme: const AppBarTheme(
       centerTitle: true,
       elevation: 0,
