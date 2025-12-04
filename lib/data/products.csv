@@ -1,0 +1,6 @@
+id,name,description,price,category,quantity,imageUrl
+1,Laptop,A high-performance laptop,1200.00,Electronics,10,assets/images/laptop.png
+2,Smartphone,A latest model smartphone,800.00,Electronics,25,assets/images/smartphone.png
+3,Coffee Maker,Drip coffee maker,50.00,Home Appliances,50,assets/images/coffee_maker.png
+4,Running Shoes,Comfortable running shoes,120.00,Footwear,100,assets/images/running_shoes.png
+5,Backpack,A spacious and durable backpack,75.00,Accessories,75,assets/images/backpack.png

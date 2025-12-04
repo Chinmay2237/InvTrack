@@ -77,7 +77,7 @@ class _AddHandoverScreenState extends State<AddHandoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final products = Provider.of<ProductProvider>(context).items;
+    final products = Provider.of<ProductProvider>(context).products;
 
     return Scaffold(
       appBar: AppBar(

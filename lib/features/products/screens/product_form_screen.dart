@@ -53,7 +53,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       if (_isEditing) {
         productProvider.updateProduct(_product.id, _product);
       } else {
-        productProvider.addProduct(_product);
+        productProvider.addProduct(_product, _imageFile);
       }
       context.pop();
     }
@@ -131,11 +131,11 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
     return GestureDetector(
       onTap: _pickImage,
       child: DottedBorder(
-        color: theme.colorScheme.onSurface.withAlpha(102),
-        strokeWidth: 2,
-        dashPattern: const [8, 4],
-        borderType: BorderType.RRect,
-        radius: const Radius.circular(12),
+        // color: theme.colorScheme.onSurface.withAlpha(102),
+        // strokeWidth: 2,
+        // dashPattern: const [8, 4],
+        // borderType: BorderType.RRect,
+        // radius: const Radius.circular(12),
         child: Container(
           height: 200,
           width: double.infinity,

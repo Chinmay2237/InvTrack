@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/widgets/ui_helper.dart';
 import '../../../../features/products/models/product.dart';
 import '../../../../features/products/providers/product_provider.dart';
 import '../../../../features/products/screens/edit_product_screen.dart';
@@ -76,7 +75,6 @@ class ProductDetailScreen extends StatelessWidget {
                     product.description,
                     style: theme.textTheme.displaySmall,
                   ),
-                  UIHelper.verticalSpaceLarge,
                 ],
               ),
             ),

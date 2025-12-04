@@ -25,6 +25,7 @@ dependencies:
   fl_chart: ^1.1.1
   carousel_slider: ^4.2.1
   dotted_border: ^3.1.0
+  path_provider: ^2.1.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -33,3 +34,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - lib/data/

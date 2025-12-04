@@ -1,23 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
-import 'package:myapp/app_router.dart';
-import 'package:myapp/providers/theme_provider.dart';
-import 'package:myapp/features/products/providers/product_provider.dart';
-import 'package:myapp/features/assign/providers/assign_provider.dart';
+import 'providers/theme_provider.dart';
+import 'features/products/providers/product_provider.dart';
+
+import 'features/dashboard/screens/dashboard_screen.dart';
+import 'features/products/screens/products_overview_screen.dart';
+import 'features/products/screens/product_detail_screen.dart';
+import 'features/products/screens/product_form_screen.dart';
+import 'features/settings/screens/settings_screen.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => AssignProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -25,71 +21,82 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color primarySeedColor = Colors.blue;
-
-    final TextTheme appTextTheme = TextTheme(
-      displayLarge: GoogleFonts.poppins(fontSize: 57, fontWeight: FontWeight.bold),
-      titleLarge: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w500),
-      bodyMedium: GoogleFonts.poppins(fontSize: 14),
-    );
-
-    final ThemeData lightTheme = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primarySeedColor,
-        brightness: Brightness.light,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp.router(
+            title: 'Inventory Management',
+            themeMode: themeProvider.themeMode,
+            theme: _buildTheme(context, Brightness.light),
+            darkTheme: _buildTheme(context, Brightness.dark),
+            routerConfig: _router,
+          );
+        },
       ),
-      textTheme: appTextTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: primarySeedColor,
-        foregroundColor: Colors.white,
-        titleTextStyle: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white,
-          backgroundColor: primarySeedColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-      ),
-    );
-
-    final ThemeData darkTheme = ThemeData(
-      useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: primarySeedColor,
-        brightness: Brightness.dark,
-      ),
-      textTheme: appTextTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.grey[900],
-        foregroundColor: Colors.white,
-        titleTextStyle: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.bold),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.black,
-          backgroundColor: primarySeedColor.shade200,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          textStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-      ),
-    );
-
-    return Consumer<ThemeProvider>(
-      builder: (context, themeProvider, child) {
-        return MaterialApp.router(
-          routerConfig: AppRouter.router,
-          title: 'Inventorio',
-          theme: lightTheme,
-          darkTheme: darkTheme,
-          themeMode: themeProvider.themeMode,
-          debugShowCheckedModeBanner: false,
-        );
-      },
     );
   }
 }
+
+ThemeData _buildTheme(BuildContext context, Brightness brightness) {
+  final baseTheme = ThemeData(
+    primarySwatch: Colors.deepPurple,
+    brightness: brightness,
+    useMaterial3: true,
+  );
+
+  return baseTheme.copyWith(
+    textTheme: GoogleFonts.poppinsTextTheme(baseTheme.textTheme),
+    appBarTheme: const AppBarTheme(
+      centerTitle: true,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+    ),
+    scaffoldBackgroundColor: brightness == Brightness.light ? Colors.grey.shade100 : Colors.grey.shade900,
+    cardTheme: CardThemeData(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
+  );
+}
+
+final _router = GoRouter(
+  initialLocation: '/',
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const DashboardScreen(),
+      routes: [
+        GoRoute(
+          path: 'products',
+          builder: (context, state) => const ProductsOverviewScreen(),
+          routes: [
+            GoRoute(
+              path: 'new',
+              builder: (context, state) => const ProductFormScreen(),
+            ),
+            GoRoute(
+              path: ':id',
+              builder: (context, state) => ProductDetailScreen(productId: state.pathParameters['id']!),
+              routes: [
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) => ProductFormScreen(productId: state.pathParameters['id']!),
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: 'settings',
+          builder: (context, state) => const SettingsScreen(),
+        ),
+      ],
+    ),
+  ],
+);

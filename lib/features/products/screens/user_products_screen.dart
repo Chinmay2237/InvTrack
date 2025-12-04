@@ -33,11 +33,11 @@ class UserProductsScreen extends StatelessWidget {
                 onRefresh: () => _refreshProducts(context),
                 child: Consumer<ProductProvider>(
                   builder: (ctx, productData, child) => ListView.builder(
-                    itemCount: productData.items.length,
+                    itemCount: productData.products.length,
                     itemBuilder: (_, i) => UserProductItem(
-                      id: productData.items[i].id,
-                      title: productData.items[i].name,
-                      imageUrl: productData.items[i].imageUrl,
+                      id: productData.products[i].id,
+                      title: productData.products[i].name,
+                      imageUrl: productData.products[i].imageUrl,
                     ),
                   ),
                 ),

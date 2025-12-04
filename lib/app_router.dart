@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:myapp/features/home/screens/home_screen.dart';
 import 'package:myapp/features/dashboard/screens/dashboard_screen.dart';
 import 'package:myapp/features/products/screens/products_overview_screen.dart';
 import 'package:myapp/features/products/screens/product_detail_screen.dart';
@@ -13,7 +12,6 @@ class AppRouter {
     initialLocation: '/',
     routes: [
       ShellRoute(
-        builder: (context, state, child) => HomeScreen(child: child),
         routes: [
           GoRoute(
             path: '/',

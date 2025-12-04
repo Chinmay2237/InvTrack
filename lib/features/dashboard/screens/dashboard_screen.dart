@@ -11,12 +11,12 @@ class DashboardScreen extends StatelessWidget {
     final productsProvider = Provider.of<ProductProvider>(context);
     final assignProvider = Provider.of<AssignProvider>(context);
     final lowStockProducts = productsProvider.lowStockItems;
-    final totalProducts = productsProvider.items.length;
+    final totalProducts = productsProvider.products.length;
     final assignedProducts = assignProvider.assignedItems.length;
     final availableProducts = totalProducts - assignedProducts;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -51,7 +51,7 @@ class DashboardScreen extends StatelessWidget {
               'Alex', // Placeholder name
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ],
@@ -72,7 +72,7 @@ class DashboardScreen extends StatelessWidget {
           'Quick Actions',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -107,7 +107,7 @@ class DashboardScreen extends StatelessWidget {
             label,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -123,7 +123,7 @@ class DashboardScreen extends StatelessWidget {
           'Summary',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -177,7 +177,7 @@ class DashboardScreen extends StatelessWidget {
           'Low on Stock',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -210,7 +210,7 @@ class DashboardScreen extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 12),
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -260,7 +260,7 @@ class DashboardScreen extends StatelessWidget {
           'Recent Activity',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -293,7 +293,7 @@ class DashboardScreen extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 12),
-      color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.5),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.1),

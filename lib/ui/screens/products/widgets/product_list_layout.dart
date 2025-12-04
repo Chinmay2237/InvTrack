@@ -22,7 +22,7 @@ class ProductListLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    final products = productProvider.items.where((p) {
+    final products = productProvider.products.where((p) {
       final matchesSearch = p.name.toLowerCase().contains(searchQuery.toLowerCase());
       final matchesCategory = category == 'All' || p.category == category;
       return matchesSearch && matchesCategory;
@@ -33,7 +33,7 @@ class ProductListLayout extends StatelessWidget {
         child: EmptyState(
           icon: Icons.search_off_rounded,
           message: 'No products found.',
-          suggestion: 'Try a different search or filter.',
+          title: '',
         ),
       );
     }

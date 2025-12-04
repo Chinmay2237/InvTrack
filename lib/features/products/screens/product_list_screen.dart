@@ -20,7 +20,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     final productProvider = Provider.of<ProductProvider>(context);
-    final allProducts = productProvider.items; 
+    final allProducts = productProvider.products; 
 
     final categories = ['All', ...allProducts.map((p) => p.category).toSet().toList()];
 

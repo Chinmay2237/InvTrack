@@ -38,7 +38,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     });
 
     try {
-      await Provider.of<ProductProvider>(context, listen: false).addProduct(_newProduct, _pickedImage);
+      Provider.of<ProductProvider>(context, listen: false).addProduct(_newProduct, _pickedImage);
       if (mounted) {
         Navigator.of(context).pop();
       }

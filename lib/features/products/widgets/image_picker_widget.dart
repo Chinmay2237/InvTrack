@@ -37,17 +37,15 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return GestureDetector(
       onTap: _pickImage,
       child: Container(
         width: double.infinity,
         height: 200,
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface.withOpacity(0.5),
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.3)),
+          border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3)),
         ),
         child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
@@ -59,9 +57,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.add_a_photo_outlined, size: 40, color: theme.colorScheme.onSurface.withOpacity(0.6)),
+                            Icon(Icons.add_a_photo_outlined, size: 40, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6)),
                             const SizedBox(height: 8),
-                            Text('Tap to select image', style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface.withOpacity(0.6))),
+                            Text('Tap to select image', style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6))),
                           ],
                         ),
                       ),

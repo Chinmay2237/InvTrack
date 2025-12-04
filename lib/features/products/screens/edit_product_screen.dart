@@ -52,9 +52,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     try {
       if (_editedProduct.id.isNotEmpty) {
-        await Provider.of<ProductProvider>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
+        Provider.of<ProductProvider>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
       } else {
-        await Provider.of<ProductProvider>(context, listen: false).addProduct(_editedProduct, _pickedImage);
+        Provider.of<ProductProvider>(context, listen: false).addProduct(_editedProduct, _pickedImage);
       }
       Navigator.of(context).pop();
     } catch (error) {
