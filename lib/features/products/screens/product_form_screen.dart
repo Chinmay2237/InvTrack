@@ -51,9 +51,9 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
       _formKey.currentState!.save();
       final productProvider = Provider.of<ProductProvider>(context, listen: false);
       if (_isEditing) {
-        productProvider.updateProduct(_product.id.toString(),_product);
+        productProvider.updateProduct(_product.id, _product);
       } else {
-        productProvider.addProduct(_product.copyWith(id: DateTime.now().toIso8601String()), null);
+        productProvider.addProduct(_product);
       }
       context.pop();
     }
@@ -141,7 +141,7 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
           width: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            color: theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+            color: theme.colorScheme.surface.withAlpha(50),
           ),
           child: _imageFile != null || (_isEditing && _product.imageUrl.isNotEmpty)
               ? ClipRRect(

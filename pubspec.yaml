@@ -22,7 +22,7 @@ dependencies:
   uuid: ^4.4.0
   shimmer: ^3.0.0
   http: ^1.2.1
-  fl_chart: ^0.68.0
+  fl_chart: ^1.1.1
   carousel_slider: ^4.2.1
   dotted_border: ^3.1.0
 dev_dependencies:
