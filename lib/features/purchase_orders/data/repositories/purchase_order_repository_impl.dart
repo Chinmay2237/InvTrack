@@ -13,7 +13,9 @@ class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
     return db.select(db.purchaseOrders).watch().asyncMap((pos) async {
       final poEntities = <PurchaseOrderEntity>[];
       for (final po in pos) {
-        final items = await (db.select(db.purchaseOrderItems)..where((t) => t.poId.equals(po.id))).get();
+        final items = await (db.select(db.purchaseOrderItems)
+              ..where((t) => t.poId.equals(po.id)))
+            .get();
         final itemEntities = items
             .map((i) => PurchaseOrderItemEntity(
                   id: i.id,
@@ -76,17 +78,23 @@ class PurchaseOrderRepositoryImpl implements PurchaseOrderRepository {
       ),
     );
 
-    final items = await (db.select(db.purchaseOrderItems)..where((t) => t.poId.equals(poId))).get();
+    final items = await (db.select(db.purchaseOrderItems)
+          ..where((t) => t.poId.equals(poId)))
+        .get();
 
     for (final item in items) {
-      await (db.update(db.purchaseOrderItems)..where((t) => t.id.equals(item.id))).write(
+      await (db.update(db.purchaseOrderItems)
+            ..where((t) => t.id.equals(item.id)))
+          .write(
         PurchaseOrderItemsCompanion(
           receivedQty: Value(item.orderedQty),
         ),
       );
 
       final currentStock = await (db.select(db.stockLevels)
-            ..where((t) => t.itemId.equals(item.itemId) & t.warehouseId.equals(warehouseId)))
+            ..where((t) =>
+                t.itemId.equals(item.itemId) &
+                t.warehouseId.equals(warehouseId)))
           .getSingleOrNull();
 
       final currentQty = currentStock?.quantity ?? 0;

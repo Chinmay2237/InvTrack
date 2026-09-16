@@ -62,9 +62,11 @@ class StockMovements extends Table {
   TextColumn get itemId => text()();
   TextColumn get sourceWarehouseId => text().nullable()();
   TextColumn get targetWarehouseId => text().nullable()();
-  TextColumn get movementType => text()(); // 'in', 'out', 'transfer', 'adjustment'
+  TextColumn get movementType =>
+      text()(); // 'in', 'out', 'transfer', 'adjustment'
   IntColumn get quantity => integer()();
-  TextColumn get referenceType => text().nullable()(); // 'po', 'so', 'handover', 'manual'
+  TextColumn get referenceType =>
+      text().nullable()(); // 'po', 'so', 'handover', 'manual'
   TextColumn get referenceId => text().nullable()();
   TextColumn get createdBy => text().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
@@ -93,10 +95,12 @@ class Handovers extends Table {
   TextColumn get employeeId => text()();
   TextColumn get assignmentType => text()(); // 'permanent', 'temporary'
   TextColumn get projectName => text().nullable()();
-  DateTimeColumn get assignedDate => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get assignedDate =>
+      dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get dueDate => dateTime().nullable()();
   DateTimeColumn get returnDate => dateTime().nullable()();
-  TextColumn get status => text().withDefault(const Constant('active'))(); // 'active', 'returned', 'overdue'
+  TextColumn get status => text().withDefault(
+      const Constant('active'))(); // 'active', 'returned', 'overdue'
   TextColumn get notes => text().nullable()();
 
   @override
@@ -131,7 +135,8 @@ class PurchaseOrders extends Table {
   TextColumn get id => text()();
   TextColumn get poNumber => text()();
   TextColumn get supplierId => text()();
-  TextColumn get status => text().withDefault(const Constant('draft'))(); // 'draft', 'submitted', 'received'
+  TextColumn get status => text().withDefault(
+      const Constant('draft'))(); // 'draft', 'submitted', 'received'
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
   DateTimeColumn get expectedDate => dateTime().nullable()();
 
@@ -234,108 +239,141 @@ class AppDatabase extends _$AppDatabase {
       ),
     );
 
-    // 3. Seed Categories
-    const electronicsId = 'cat_elec';
-    const footwearId = 'cat_footwear';
-    const homeId = 'cat_home';
-    const accId = 'cat_acc';
+    // 3. Seed Medical Device Categories
+    const diagId = 'cat_med_diag';
+    const monId = 'cat_med_mon';
+    const labId = 'cat_med_lab';
+    const surgId = 'cat_med_surg';
 
     await into(categories).insert(
       CategoriesCompanion.insert(
-        id: electronicsId,
-        name: 'Electronics',
-        description: const Value('Computers, mobile devices & hardware'),
+        id: diagId,
+        name: 'Diagnostic Systems',
+        description:
+            const Value('Ultrasound, optical scanners & lab diagnostics'),
       ),
     );
     await into(categories).insert(
       CategoriesCompanion.insert(
-        id: footwearId,
-        name: 'Footwear',
-        description: const Value('Safety shoes & workwear'),
+        id: monId,
+        name: 'Patient Monitoring',
+        description: const Value('ECG, telemetry & multi-parameter monitors'),
       ),
     );
     await into(categories).insert(
       CategoriesCompanion.insert(
-        id: homeId,
-        name: 'Home & Office',
-        description: const Value('Appliances & facility gear'),
+        id: labId,
+        name: 'Laboratory Equipment',
+        description: const Value('Pipette stations, centrifuges & analyzers'),
       ),
     );
     await into(categories).insert(
       CategoriesCompanion.insert(
-        id: accId,
-        name: 'Accessories',
-        description: const Value('Carrying cases & peripherals'),
+        id: surgId,
+        name: 'Surgical & Clinical Equipment',
+        description:
+            const Value('Sterile consoles, peripherals & kit packages'),
       ),
     );
 
-    // 4. Seed Employees
+    // 4. Seed Clinical & Biomedical Staff
     const emp1 = 'E1';
     const emp2 = 'E2';
     const emp3 = 'E3';
     const emp4 = 'E4';
 
-    await into(employees).insert(EmployeesCompanion.insert(id: emp1, employeeCode: 'EMP-001', name: 'Alice Smith', email: const Value('alice@company.com'), department: const Value('Engineering')));
-    await into(employees).insert(EmployeesCompanion.insert(id: emp2, employeeCode: 'EMP-002', name: 'Bob Jones', email: const Value('bob@company.com'), department: const Value('Operations')));
-    await into(employees).insert(EmployeesCompanion.insert(id: emp3, employeeCode: 'EMP-003', name: 'Charlie Brown', email: const Value('charlie@company.com'), department: const Value('Design')));
-    await into(employees).insert(EmployeesCompanion.insert(id: emp4, employeeCode: 'EMP-004', name: 'Diana Prince', email: const Value('diana@company.com'), department: const Value('Management')));
+    await into(employees).insert(EmployeesCompanion.insert(
+        id: emp1,
+        employeeCode: 'EMP-001',
+        name: 'Dr. Sarah Jenkins',
+        email: const Value('s.jenkins@medcenter.org'),
+        department: const Value('Cardiology')));
+    await into(employees).insert(EmployeesCompanion.insert(
+        id: emp2,
+        employeeCode: 'EMP-002',
+        name: 'Marcus Vance',
+        email: const Value('m.vance@medcenter.org'),
+        department: const Value('BioMed Engineering')));
+    await into(employees).insert(EmployeesCompanion.insert(
+        id: emp3,
+        employeeCode: 'EMP-003',
+        name: 'Elena Rostova',
+        email: const Value('e.rostova@medcenter.org'),
+        department: const Value('Clinical Operations')));
+    await into(employees).insert(EmployeesCompanion.insert(
+        id: emp4,
+        employeeCode: 'EMP-004',
+        name: 'David Chen',
+        email: const Value('d.chen@medcenter.org'),
+        department: const Value('Surgical Suite Ops')));
 
-    // 5. Seed Items (from InvTrack initial catalog)
+    // 5. Seed Medical Device Catalog Items
     final itemsData = [
       {
         'id': 'item_1',
-        'name': 'Laptop Pro 15',
-        'sku': 'SKU-LAP-001',
+        'name': 'Digital Precision Pipette Station',
+        'sku': 'SKU-MED-PIP-01',
         'barcode': '8901234567890',
-        'cat': electronicsId,
-        'cost': 950.0,
-        'sale': 1200.0,
-        'qty': 10,
-        'img': 'assets/images/laptop.png',
+        'cat': labId,
+        'cost': 1450.0,
+        'sale': 1950.0,
+        'qty': 8,
+        'img': 'assets/images/pipette.png',
       },
       {
         'id': 'item_2',
-        'name': 'Smartphone Ultra',
-        'sku': 'SKU-PHN-002',
+        'name': 'Multi-Parameter Vital Signs Monitor',
+        'sku': 'SKU-MED-MON-02',
         'barcode': '8901234567891',
-        'cat': electronicsId,
-        'cost': 600.0,
-        'sale': 800.0,
-        'qty': 25,
-        'img': 'assets/images/smartphone.png',
+        'cat': monId,
+        'cost': 3200.0,
+        'sale': 4500.0,
+        'qty': 14,
+        'img': 'assets/images/monitor.png',
       },
       {
         'id': 'item_3',
-        'name': 'Office Coffee Maker',
-        'sku': 'SKU-APL-003',
+        'name': 'Diagnostic Stereo Microscope',
+        'sku': 'SKU-MED-MIC-03',
         'barcode': '8901234567892',
-        'cat': homeId,
-        'cost': 35.0,
-        'sale': 50.0,
-        'qty': 50,
-        'img': 'assets/images/coffee_maker.png',
+        'cat': diagId,
+        'cost': 2800.0,
+        'sale': 3800.0,
+        'qty': 5,
+        'img': 'assets/images/microscope.png',
       },
       {
         'id': 'item_4',
-        'name': 'Safety Running Shoes',
-        'sku': 'SKU-SHS-004',
+        'name': 'Medical Grade Input Console',
+        'sku': 'SKU-MED-KBD-04',
         'barcode': '8901234567893',
-        'cat': footwearId,
-        'cost': 80.0,
-        'sale': 120.0,
-        'qty': 100,
-        'img': 'assets/images/running_shoes.png',
+        'cat': surgId,
+        'cost': 220.0,
+        'sale': 350.0,
+        'qty': 30,
+        'img': 'assets/images/keyboard.png',
       },
       {
         'id': 'item_5',
-        'name': 'Rugged Backpack',
-        'sku': 'SKU-BAG-005',
+        'name': 'Sanitizable Optical Sensor Controller',
+        'sku': 'SKU-MED-MSE-05',
         'barcode': '8901234567894',
-        'cat': accId,
-        'cost': 45.0,
-        'sale': 75.0,
-        'qty': 75,
-        'img': 'assets/images/backpack.png',
+        'cat': surgId,
+        'cost': 85.0,
+        'sale': 140.0,
+        'qty': 45,
+        'img': 'assets/images/mouse.png',
+      },
+      {
+        'id': 'item_6',
+        'name': 'Surgical Suite Cubicle Modular Kit',
+        'sku': 'SKU-MED-KIT-06',
+        'barcode': '8901234567895',
+        'cat': surgId,
+        'cost': 5500.0,
+        'sale': 7200.0,
+        'qty': 3,
+        'img': 'assets/images/cubicle_kit.png',
       },
     ];
 
@@ -371,12 +409,12 @@ class AppDatabase extends _$AppDatabase {
           targetWarehouseId: const Value(mainWarehouseId),
           movementType: 'in',
           quantity: qty,
-          notes: const Value('Initial stock seed'),
+          notes: const Value('Initial medical device catalog seed'),
         ),
       );
     }
 
-    // 6. Seed Handovers (Permanent & Temporary)
+    // 6. Seed Asset Handovers & Equipment Assignments
     final handover1Id = uuid.v4();
     await into(handovers).insert(
       HandoversCompanion.insert(
@@ -384,9 +422,9 @@ class AppDatabase extends _$AppDatabase {
         itemId: 'item_1',
         employeeId: emp1,
         assignmentType: 'permanent',
-        projectName: const Value('Core Platform R&D'),
+        projectName: const Value('Cardiovascular Diagnostic Unit'),
         status: const Value('active'),
-        notes: const Value('Primary dev machine issued to Alice'),
+        notes: const Value('Primary lab pipette assigned to Dr. Jenkins'),
       ),
     );
 
@@ -397,10 +435,11 @@ class AppDatabase extends _$AppDatabase {
         itemId: 'item_2',
         employeeId: emp2,
         assignmentType: 'temporary',
-        projectName: const Value('Field Testing Campaign'),
-        dueDate: Value(now.subtract(const Duration(days: 2))), // Overdue return test
+        projectName: const Value('ICU Field Deployment Trial'),
+        dueDate:
+            Value(now.subtract(const Duration(days: 2))), // Overdue return test
         status: const Value('overdue'),
-        notes: const Value('Issued for 2-week testing field trial'),
+        notes: const Value('Issued for 14-day clinical monitoring trial'),
       ),
     );
   }

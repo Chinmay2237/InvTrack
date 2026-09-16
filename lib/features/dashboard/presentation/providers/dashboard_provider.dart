@@ -40,7 +40,8 @@ final dashboardKpisProvider = StreamProvider<DashboardKpis>((ref) async* {
       }
     }
 
-    final activeHandovers = handovers.where((h) => h.status != 'returned').length;
+    final activeHandovers =
+        handovers.where((h) => h.status != 'returned').length;
 
     return DashboardKpis(
       totalStockValue: totalVal,
@@ -55,7 +56,9 @@ final dashboardKpisProvider = StreamProvider<DashboardKpis>((ref) async* {
 final recentMovementsProvider = StreamProvider<List<StockMovement>>((ref) {
   final db = ref.watch(databaseProvider);
   return (db.select(db.stockMovements)
-        ..orderBy([(t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc)])
+        ..orderBy([
+          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc)
+        ])
         ..limit(5))
       .watch();
 });

@@ -9,7 +9,6 @@ import '../../features/inventory/presentation/item_detail_screen.dart';
 import '../../features/inventory/presentation/item_form_screen.dart';
 import '../../features/scanning/presentation/scanning_screen.dart';
 import '../../features/handovers/presentation/handovers_overview_screen.dart';
-import '../../features/handover_queue/presentation/handover_queue_screen.dart';
 import '../../features/handovers/presentation/handover_form_screen.dart';
 import '../../features/reports_analytics/presentation/reports_analytics_screen.dart';
 import '../../features/stock_movements/presentation/stock_movements_screen.dart';
@@ -34,8 +33,10 @@ Page<dynamic> _buildSmoothPage({
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(0.04, 0.0);
       const end = Offset.zero;
-      final slideTween = Tween(begin: begin, end: end).chain(CurveTween(curve: Curves.fastOutSlowIn));
-      final fadeTween = Tween<double>(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeOut));
+      final slideTween = Tween(begin: begin, end: end)
+          .chain(CurveTween(curve: Curves.fastOutSlowIn));
+      final fadeTween = Tween<double>(begin: 0.0, end: 1.0)
+          .chain(CurveTween(curve: Curves.easeOut));
 
       return SlideTransition(
         position: animation.drive(slideTween),
@@ -179,7 +180,9 @@ final appRouter = GoRouter(
                   pageBuilder: (context, state) => _buildSmoothPage(
                     context: context,
                     state: state,
-                    child: const HandoverQueueScreen(),
+                    child: const HandoversOverviewScreen(
+                      initialFilter: 'overdue',
+                    ),
                   ),
                 ),
               ],

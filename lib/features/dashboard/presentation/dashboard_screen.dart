@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/database/database.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../inventory/domain/entities/item_entity.dart';
 import '../../inventory/presentation/providers/inventory_provider.dart';
@@ -49,7 +49,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 color: AppTokens.primary,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Icon(LucideIcons.boxes, color: Colors.white, size: 18),
+              child: const Icon(AppIcons.inventoryActive,
+                  color: Colors.white, size: 18),
             ),
             const SizedBox(width: 10),
             const Text('InvTrack Dashboard'),
@@ -57,12 +58,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.chart_bar),
+            icon: const Icon(AppIcons.category),
             tooltip: 'Reports & Analytics',
             onPressed: () => context.go('/reports'),
           ),
           IconButton(
-            icon: const Icon(LucideIcons.arrow_left_right),
+            icon: const Icon(AppIcons.handovers),
             tooltip: 'Stock Movement Ledger',
             onPressed: () => context.go('/stock-movements'),
           ),
@@ -88,8 +89,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 child: _buildKpiCard(
                                   context,
                                   title: 'Total Stock Value',
-                                  value: '\$${kpis.totalStockValue.toStringAsFixed(2)}',
-                                  icon: LucideIcons.dollar_sign,
+                                  value:
+                                      '\$${kpis.totalStockValue.toStringAsFixed(2)}',
+                                  icon: AppIcons.stock,
                                   color: AppTokens.primary,
                                   bgColor: AppTokens.primarySurfaceLight,
                                 ),
@@ -100,7 +102,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   context,
                                   title: 'Low Stock Alerts',
                                   value: '${kpis.lowStockCount}',
-                                  icon: LucideIcons.triangle_alert,
+                                  icon: AppIcons.lowStock,
                                   color: AppTokens.warning,
                                   bgColor: AppTokens.warningSurfaceLight,
                                 ),
@@ -115,7 +117,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   context,
                                   title: 'Assigned Assets',
                                   value: '${kpis.assignedAssetsCount}',
-                                  icon: LucideIcons.user_check,
+                                  icon: AppIcons.assignment,
                                   color: AppTokens.info,
                                   bgColor: AppTokens.infoSurfaceLight,
                                 ),
@@ -126,7 +128,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   context,
                                   title: 'Total SKUs',
                                   value: '${kpis.totalItemsCount}',
-                                  icon: LucideIcons.box,
+                                  icon: AppIcons.asset,
                                   color: AppTokens.primary,
                                   bgColor: AppTokens.primarySurfaceLight,
                                 ),
@@ -142,8 +144,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             child: _buildKpiCard(
                               context,
                               title: 'Total Stock Value',
-                              value: '\$${kpis.totalStockValue.toStringAsFixed(2)}',
-                              icon: LucideIcons.dollar_sign,
+                              value:
+                                  '\$${kpis.totalStockValue.toStringAsFixed(2)}',
+                              icon: AppIcons.stock,
                               color: AppTokens.primary,
                               bgColor: AppTokens.primarySurfaceLight,
                             ),
@@ -154,7 +157,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               context,
                               title: 'Low Stock Alerts',
                               value: '${kpis.lowStockCount}',
-                              icon: LucideIcons.triangle_alert,
+                              icon: AppIcons.lowStock,
                               color: AppTokens.warning,
                               bgColor: AppTokens.warningSurfaceLight,
                             ),
@@ -165,7 +168,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               context,
                               title: 'Assigned Assets',
                               value: '${kpis.assignedAssetsCount}',
-                              icon: LucideIcons.user_check,
+                              icon: AppIcons.assignment,
                               color: AppTokens.info,
                               bgColor: AppTokens.infoSurfaceLight,
                             ),
@@ -176,7 +179,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               context,
                               title: 'Catalog SKUs',
                               value: '${kpis.totalItemsCount}',
-                              icon: LucideIcons.box,
+                              icon: AppIcons.asset,
                               color: AppTokens.primary,
                               bgColor: AppTokens.primarySurfaceLight,
                             ),
@@ -199,7 +202,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Text('Quick Ops:', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Quick Ops:',
+                        style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(width: 16),
                     Expanded(
                       child: SingleChildScrollView(
@@ -208,19 +212,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           children: [
                             ElevatedButton.icon(
                               onPressed: () => context.go('/scan'),
-                              icon: const Icon(LucideIcons.qr_code, size: 18),
+                              icon: const Icon(AppIcons.scanActive, size: 18),
                               label: const Text('Launch Scanner'),
                             ),
                             const SizedBox(width: 10),
                             OutlinedButton.icon(
                               onPressed: () => context.go('/handovers/new'),
-                              icon: const Icon(LucideIcons.user_plus, size: 18),
+                              icon: const Icon(AppIcons.assignment, size: 18),
                               label: const Text('New Handover'),
                             ),
                             const SizedBox(width: 10),
                             OutlinedButton.icon(
                               onPressed: () => context.go('/inventory/new'),
-                              icon: const Icon(LucideIcons.plus, size: 18),
+                              icon: const Icon(AppIcons.add, size: 18),
                               label: const Text('Add Catalog Item'),
                             ),
                           ],
@@ -249,9 +253,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(flex: 3, child: _buildStockMovementChart(context, isDark)),
+                      Expanded(
+                          flex: 3,
+                          child: _buildStockMovementChart(context, isDark)),
                       const SizedBox(width: 16),
-                      Expanded(flex: 2, child: _buildCategoryDonutChart(context, isDark)),
+                      Expanded(
+                          flex: 2,
+                          child: _buildCategoryDonutChart(context, isDark)),
                     ],
                   );
                 }
@@ -273,7 +281,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
                 TextButton.icon(
                   onPressed: () => context.go('/handovers'),
-                  icon: const Icon(LucideIcons.arrow_right, size: 16),
+                  icon: const Icon(AppIcons.forward, size: 16),
                   label: const Text('View All Handovers'),
                 ),
               ],
@@ -287,7 +295,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   return const Card(
                     child: Padding(
                       padding: EdgeInsets.all(24),
-                      child: Center(child: Text('No asset handovers recorded yet.')),
+                      child: Center(
+                          child: Text('No asset handovers recorded yet.')),
                     ),
                   );
                 }
@@ -306,25 +315,34 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: isPerm ? AppTokens.primarySurfaceLight : AppTokens.infoSurfaceLight,
+                          backgroundColor: isPerm
+                              ? AppTokens.primarySurfaceLight
+                              : AppTokens.infoSurfaceLight,
                           child: Icon(
-                            isPerm ? LucideIcons.user_check : LucideIcons.clock,
+                            isPerm ? AppIcons.assignment : AppIcons.history,
                             color: isPerm ? AppTokens.primary : AppTokens.info,
                             size: 18,
                           ),
                         ),
-                        title: Text(item?.name ?? 'Item ${h.itemId}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text('Issued to ${emp?.name ?? h.employeeId} | Project: ${h.projectName ?? "Core"}'),
+                        title: Text(item?.name ?? 'Item ${h.itemId}',
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(
+                            'Issued to ${emp?.name ?? h.employeeId} | Project: ${h.projectName ?? "Core"}'),
                         trailing: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: isPerm ? AppTokens.primarySurfaceLight : AppTokens.infoSurfaceLight,
+                            color: isPerm
+                                ? AppTokens.primarySurfaceLight
+                                : AppTokens.infoSurfaceLight,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             h.assignmentType.toUpperCase(),
                             style: TextStyle(
-                              color: isPerm ? AppTokens.primary : AppTokens.info,
+                              color:
+                                  isPerm ? AppTokens.primary : AppTokens.info,
                               fontWeight: FontWeight.bold,
                               fontSize: 10,
                             ),
@@ -421,10 +439,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               height: 200,
               child: LineChart(
                 LineChartData(
-                  gridData: const FlGridData(show: true, drawVerticalLine: false),
+                  gridData:
+                      const FlGridData(show: true, drawVerticalLine: false),
                   titlesData: const FlTitlesData(
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
@@ -463,7 +484,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Stock by Category', style: Theme.of(context).textTheme.titleMedium),
+            Text('Stock by Category',
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 20),
             SizedBox(
               height: 204,
@@ -472,10 +494,42 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   sectionsSpace: 4,
                   centerSpaceRadius: 40,
                   sections: [
-                    PieChartSectionData(color: AppTokens.primary, value: 40, title: '40%', radius: 45, titleStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
-                    PieChartSectionData(color: AppTokens.info, value: 30, title: '30%', radius: 45, titleStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
-                    PieChartSectionData(color: AppTokens.warning, value: 15, title: '15%', radius: 45, titleStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
-                    PieChartSectionData(color: Colors.purple, value: 15, title: '15%', radius: 45, titleStyle: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 12)),
+                    PieChartSectionData(
+                        color: AppTokens.primary,
+                        value: 40,
+                        title: '40%',
+                        radius: 45,
+                        titleStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 12)),
+                    PieChartSectionData(
+                        color: AppTokens.info,
+                        value: 30,
+                        title: '30%',
+                        radius: 45,
+                        titleStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 12)),
+                    PieChartSectionData(
+                        color: AppTokens.warning,
+                        value: 15,
+                        title: '15%',
+                        radius: 45,
+                        titleStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 12)),
+                    PieChartSectionData(
+                        color: Colors.purple,
+                        value: 15,
+                        title: '15%',
+                        radius: 45,
+                        titleStyle: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 12)),
                   ],
                 ),
               ),

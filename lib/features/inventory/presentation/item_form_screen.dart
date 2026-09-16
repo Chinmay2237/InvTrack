@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/database/database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_icons.dart';
+import '../../../core/widgets/app_page_header.dart';
+import '../../../core/widgets/app_section_header.dart';
+import '../../../core/widgets/app_surface.dart';
+import '../../../core/widgets/app_buttons.dart';
 import 'providers/inventory_provider.dart';
 
 class ItemFormScreen extends ConsumerStatefulWidget {
@@ -41,7 +45,9 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
 
   Future<void> _loadExistingItem() async {
     final db = ref.read(databaseProvider);
-    final item = await (db.select(db.items)..where((t) => t.id.equals(widget.itemId!))).getSingleOrNull();
+    final item = await (db.select(db.items)
+          ..where((t) => t.id.equals(widget.itemId!)))
+        .getSingleOrNull();
 
     if (item != null && mounted) {
       setState(() {
@@ -86,7 +92,9 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
       id: id,
       name: _nameController.text.trim(),
       sku: _skuController.text.trim(),
-      barcode: drift.Value(_barcodeController.text.trim().isEmpty ? null : _barcodeController.text.trim()),
+      barcode: drift.Value(_barcodeController.text.trim().isEmpty
+          ? null
+          : _barcodeController.text.trim()),
       categoryId: drift.Value(_selectedCategoryId),
       costPrice: drift.Value(cost),
       salePrice: drift.Value(sale),
@@ -95,11 +103,11 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
     );
 
     if (isEditing) {
-      await (db.update(db.items)..where((t) => t.id.equals(id))).write(companion);
+      await (db.update(db.items)..where((t) => t.id.equals(id)))
+          .write(companion);
     } else {
       await db.into(db.items).insert(companion);
 
-      // Create initial stock level in main warehouse
       final mainWh = (await db.select(db.warehouses).get()).firstOrNull;
       if (mainWh != null) {
         await db.into(db.stockLevels).insert(
@@ -115,7 +123,10 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
     if (mounted) {
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(isEditing ? 'Item updated' : 'Item created successfully')),
+        SnackBar(
+            content: Text(isEditing
+                ? 'Medical device specification updated'
+                : 'Medical device registered successfully')),
       );
       context.go('/inventory');
     }
@@ -127,128 +138,170 @@ class _ItemFormScreenState extends ConsumerState<ItemFormScreen> {
     final isEditing = widget.itemId != null;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEditing ? 'Edit Item' : 'New Item'),
-        leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
-          onPressed: () => context.go('/inventory'),
-        ),
-      ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(20),
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('General Information', style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(labelText: 'Item Name *', prefixIcon: Icon(LucideIcons.box, size: 18)),
-                      validator: (val) => val == null || val.trim().isEmpty ? 'Name is required' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _skuController,
-                            decoration: const InputDecoration(labelText: 'SKU Code *', prefixIcon: Icon(LucideIcons.barcode, size: 18)),
-                            validator: (val) => val == null || val.trim().isEmpty ? 'SKU is required' : null,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _barcodeController,
-                            decoration: const InputDecoration(labelText: 'Barcode / EAN', prefixIcon: Icon(LucideIcons.qr_code, size: 18)),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    categoriesAsync.when(
-                      data: (cats) {
-                        return DropdownButtonFormField<String>(
-                          initialValue: _selectedCategoryId ?? cats.firstOrNull?.id,
-                          decoration: const InputDecoration(labelText: 'Category', prefixIcon: Icon(LucideIcons.folder, size: 18)),
-                          items: cats.map((c) => DropdownMenuItem(value: c.id, child: Text(c.name))).toList(),
-                          onChanged: (val) => setState(() => _selectedCategoryId = val),
-                        );
-                      },
-                      loading: () => const SizedBox.shrink(),
-                      error: (_, __) => const SizedBox.shrink(),
-                    ),
-                  ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppPageHeader(
+                  title: isEditing
+                      ? 'Edit Device Specification'
+                      : 'Register Medical Device',
+                  subtitle:
+                      'Configure device catalog parameters, serial tags, and stock thresholds',
+                  secondaryAction: AppSecondaryButton(
+                    label: 'Cancel',
+                    icon: AppIcons.back,
+                    onPressed: () => context.go('/inventory'),
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Pricing & Inventory Thresholds', style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _costController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(labelText: 'Cost Price (\$)', prefixIcon: Icon(LucideIcons.dollar_sign, size: 18)),
+                const SizedBox(height: 20),
+                const AppSectionHeader(title: 'Device Identification'),
+                AppSurface(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                            labelText: 'Medical Device Name *',
+                            prefixIcon: Icon(AppIcons.asset, size: 18)),
+                        validator: (val) => val == null || val.trim().isEmpty
+                            ? 'Device name is required'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _skuController,
+                              decoration: const InputDecoration(
+                                  labelText: 'SKU / Model Code *',
+                                  prefixIcon:
+                                      Icon(AppIcons.serialNumber, size: 18)),
+                              validator: (val) =>
+                                  val == null || val.trim().isEmpty
+                                      ? 'SKU is required'
+                                      : null,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _saleController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(labelText: 'Selling Price (\$)', prefixIcon: Icon(LucideIcons.tag, size: 18)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _barcodeController,
+                              decoration: const InputDecoration(
+                                  labelText: 'Asset Tag / Serial Barcode',
+                                  prefixIcon:
+                                      Icon(AppIcons.scanActive, size: 18)),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _reorderController,
-                            keyboardType: TextInputType.number,
-                            decoration: const InputDecoration(labelText: 'Reorder Threshold', prefixIcon: Icon(LucideIcons.triangle_alert, size: 18)),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _uomController,
-                            decoration: const InputDecoration(labelText: 'Unit of Measure', prefixIcon: Icon(LucideIcons.ruler, size: 18)),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      categoriesAsync.when(
+                        data: (cats) {
+                          return DropdownButtonFormField<String>(
+                            initialValue:
+                                _selectedCategoryId ?? cats.firstOrNull?.id,
+                            decoration: const InputDecoration(
+                                labelText: 'Device Category',
+                                prefixIcon: Icon(AppIcons.category, size: 18)),
+                            items: cats
+                                .map((c) => DropdownMenuItem(
+                                    value: c.id, child: Text(c.name)))
+                                .toList(),
+                            onChanged: (val) =>
+                                setState(() => _selectedCategoryId = val),
+                          );
+                        },
+                        loading: () => const SizedBox.shrink(),
+                        error: (_, __) => const SizedBox.shrink(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 20),
+                const AppSectionHeader(
+                    title: 'Valuation & Inventory Thresholds'),
+                AppSurface(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _costController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  labelText: 'Acquisition Cost (\$)',
+                                  prefixIcon:
+                                      Icon(AppIcons.available, size: 18)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _saleController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  labelText: 'Catalog Value (\$)',
+                                  prefixIcon:
+                                      Icon(AppIcons.batchNumber, size: 18)),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _reorderController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(
+                                  labelText: 'Reorder Alert Threshold',
+                                  prefixIcon: Icon(AppIcons.warning, size: 18)),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextFormField(
+                              controller: _uomController,
+                              decoration: const InputDecoration(
+                                  labelText: 'Unit of Measure',
+                                  prefixIcon:
+                                      Icon(AppIcons.category, size: 18)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  child: AppPrimaryButton(
+                    label: _isLoading
+                        ? 'Saving Device...'
+                        : (isEditing
+                            ? 'Update Specification'
+                            : 'Save & Register Device'),
+                    icon: AppIcons.success,
+                    onPressed: _isLoading ? () {} : _saveForm,
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: _isLoading ? null : _saveForm,
-                icon: const Icon(LucideIcons.check),
-                label: Text(isEditing ? 'Update Item' : 'Save & Register Item'),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

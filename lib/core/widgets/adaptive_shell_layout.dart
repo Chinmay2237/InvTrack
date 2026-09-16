@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../routing/app_destinations.dart';
+import '../theme/app_icons.dart';
 import '../theme/breakpoints.dart';
 import '../theme/tokens.dart';
+import 'track_loop_logo.dart';
 
 class AdaptiveShellLayout extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -42,36 +45,22 @@ class AdaptiveShellLayout extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _onDestinationSelected,
-        backgroundColor: isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight,
-        indicatorColor: isDark ? AppTokens.primarySurfaceDark : AppTokens.primarySurfaceLight,
-        elevation: 4,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(LucideIcons.layout_dashboard),
-            selectedIcon: Icon(LucideIcons.layout_dashboard, color: AppTokens.primary),
-            label: 'Dashboard',
-          ),
-          NavigationDestination(
-            icon: Icon(LucideIcons.box),
-            selectedIcon: Icon(LucideIcons.box, color: AppTokens.primary),
-            label: 'Inventory',
-          ),
-          NavigationDestination(
-            icon: Icon(LucideIcons.qr_code),
-            selectedIcon: Icon(LucideIcons.qr_code, color: AppTokens.primary),
-            label: 'Scan',
-          ),
-          NavigationDestination(
-            icon: Icon(LucideIcons.user_check),
-            selectedIcon: Icon(LucideIcons.user_check, color: AppTokens.primary),
-            label: 'Handovers',
-          ),
-          NavigationDestination(
-            icon: Icon(LucideIcons.settings),
-            selectedIcon: Icon(LucideIcons.settings, color: AppTokens.primary),
-            label: 'Settings',
-          ),
-        ],
+        backgroundColor:
+            isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight,
+        indicatorColor: isDark
+            ? AppTokens.primarySurfaceDark
+            : AppTokens.primarySurfaceLight,
+        elevation: 0,
+        height: 64,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        destinations: AppDestinationConfig.destinations.map((cfg) {
+          return NavigationDestination(
+            icon: Icon(cfg.icon, size: 20),
+            selectedIcon:
+                Icon(cfg.activeIcon, size: 20, color: AppTokens.primary),
+            label: cfg.label,
+          );
+        }).toList(),
       ),
     );
   }
@@ -86,49 +75,31 @@ class AdaptiveShellLayout extends StatelessWidget {
           NavigationRail(
             selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: _onDestinationSelected,
-            backgroundColor: isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight,
-            indicatorColor: isDark ? AppTokens.primarySurfaceDark : AppTokens.primarySurfaceLight,
+            backgroundColor:
+                isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight,
+            indicatorColor: isDark
+                ? AppTokens.primarySurfaceDark
+                : AppTokens.primarySurfaceLight,
             labelType: NavigationRailLabelType.all,
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: AppTokens.primary,
-                  borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-                ),
-                child: const Icon(LucideIcons.boxes, color: Colors.white, size: 24),
-              ),
+            minWidth: 76,
+            leading: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20.0),
+              child: TrackLoopLogo(size: 28),
             ),
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(LucideIcons.layout_dashboard),
-                selectedIcon: Icon(LucideIcons.layout_dashboard, color: AppTokens.primary),
-                label: Text('Dashboard'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(LucideIcons.box),
-                selectedIcon: Icon(LucideIcons.box, color: AppTokens.primary),
-                label: Text('Inventory'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(LucideIcons.qr_code),
-                selectedIcon: Icon(LucideIcons.qr_code, color: AppTokens.primary),
-                label: Text('Scan'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(LucideIcons.user_check),
-                selectedIcon: Icon(LucideIcons.user_check, color: AppTokens.primary),
-                label: Text('Handovers'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(LucideIcons.settings),
-                selectedIcon: Icon(LucideIcons.settings, color: AppTokens.primary),
-                label: Text('Settings'),
-              ),
-            ],
+            destinations: AppDestinationConfig.destinations.map((cfg) {
+              return NavigationRailDestination(
+                icon: Icon(cfg.icon, size: 20),
+                selectedIcon:
+                    Icon(cfg.activeIcon, size: 20, color: AppTokens.primary),
+                label: Text(cfg.label, style: const TextStyle(fontSize: 11)),
+              );
+            }).toList(),
           ),
-          const VerticalDivider(thickness: 1, width: 1, color: AppTokens.borderLight),
+          VerticalDivider(
+            thickness: 1,
+            width: 1,
+            color: isDark ? AppTokens.borderDark : AppTokens.borderLight,
+          ),
           Expanded(child: navigationShell),
         ],
       ),
@@ -144,95 +115,87 @@ class AdaptiveShellLayout extends StatelessWidget {
         children: [
           // Sidebar
           Container(
-            width: 250,
+            width: 240,
             color: isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight,
             child: Column(
               children: [
                 // App Brand Header
                 Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
                   child: Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: AppTokens.primary,
-                          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-                        ),
-                        child: const Icon(LucideIcons.boxes, color: Colors.white, size: 24),
-                      ),
+                      const TrackLoopLogo(size: 30),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'InvTrack',
-                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                            style: GoogleFonts.lora(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 18,
+                              color: isDark
+                                  ? AppTokens.textPrimaryDark
+                                  : AppTokens.textPrimaryLight,
+                            ),
                           ),
                           Text(
-                            'v2 Enterprise Studio',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                  color: AppTokens.primary,
-                                  fontSize: 10,
-                                ),
+                            'Asset & Stock Control',
+                            style: GoogleFonts.plusJakartaSans(
+                              color: isDark
+                                  ? AppTokens.textSecondaryDark
+                                  : AppTokens.textSecondaryLight,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
                     ],
                   ),
                 ),
-                const Divider(height: 1, color: AppTokens.borderLight),
+                Divider(
+                  height: 1,
+                  color: isDark ? AppTokens.borderDark : AppTokens.borderLight,
+                ),
                 const SizedBox(height: 16),
-                // Nav Items List
+                // Nav Items List (Mapped from AppDestinationConfig)
                 Expanded(
-                  child: ListView(
+                  child: ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    children: [
-                      _SidebarNavItem(
-                        icon: LucideIcons.layout_dashboard,
-                        label: 'Dashboard',
-                        isSelected: navigationShell.currentIndex == 0,
-                        onTap: () => _onDestinationSelected(0),
-                      ),
-                      _SidebarNavItem(
-                        icon: LucideIcons.box,
-                        label: 'Inventory',
-                        isSelected: navigationShell.currentIndex == 1,
-                        onTap: () => _onDestinationSelected(1),
-                      ),
-                      _SidebarNavItem(
-                        icon: LucideIcons.qr_code,
-                        label: 'Scan Station',
-                        isSelected: navigationShell.currentIndex == 2,
-                        onTap: () => _onDestinationSelected(2),
-                      ),
-                      _SidebarNavItem(
-                        icon: LucideIcons.user_check,
-                        label: 'Asset Handovers',
-                        isSelected: navigationShell.currentIndex == 3,
-                        onTap: () => _onDestinationSelected(3),
-                      ),
-                      _SidebarNavItem(
-                        icon: LucideIcons.settings,
-                        label: 'Settings',
-                        isSelected: navigationShell.currentIndex == 4,
-                        onTap: () => _onDestinationSelected(4),
-                      ),
-                    ],
+                    itemCount: AppDestinationConfig.destinations.length,
+                    itemBuilder: (context, index) {
+                      final cfg = AppDestinationConfig.destinations[index];
+                      final isSelected = navigationShell.currentIndex == index;
+                      return _SidebarNavItem(
+                        icon: isSelected ? cfg.activeIcon : cfg.icon,
+                        label: cfg.label,
+                        tooltip: cfg.accessibilityLabel,
+                        isSelected: isSelected,
+                        onTap: () => _onDestinationSelected(index),
+                      );
+                    },
                   ),
                 ),
-                const Divider(height: 1, color: AppTokens.borderLight),
+                Divider(
+                  height: 1,
+                  color: isDark ? AppTokens.borderDark : AppTokens.borderLight,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     children: [
-                      const CircleAvatar(
-                        radius: 16,
-                        backgroundColor: AppTokens.primarySurfaceLight,
-                        child: Icon(LucideIcons.user, size: 16, color: AppTokens.primary),
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AppTokens.primarySurfaceDark
+                              : AppTokens.primarySurfaceLight,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(AppIcons.user,
+                            size: 16, color: AppTokens.primary),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -240,14 +203,37 @@ class AdaptiveShellLayout extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Inventory Ops',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                              'Operations Team',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
                                   ),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            Text(
-                              'Offline Local Database',
-                              style: Theme.of(context).textTheme.labelSmall,
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: const BoxDecoration(
+                                    color: AppTokens.success,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  'Offline Ready',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        fontSize: 10,
+                                      ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -258,8 +244,21 @@ class AdaptiveShellLayout extends StatelessWidget {
               ],
             ),
           ),
-          const VerticalDivider(thickness: 1, width: 1, color: AppTokens.borderLight),
-          Expanded(child: navigationShell),
+          VerticalDivider(
+            thickness: 1,
+            width: 1,
+            color: isDark ? AppTokens.borderDark : AppTokens.borderLight,
+          ),
+          // Constrained Central Content Canvas (Max-width 1360px for elegant editorial proportion)
+          Expanded(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1360),
+                child: navigationShell,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -269,12 +268,14 @@ class AdaptiveShellLayout extends StatelessWidget {
 class _SidebarNavItem extends StatelessWidget {
   final IconData icon;
   final String label;
+  final String tooltip;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _SidebarNavItem({
     required this.icon,
     required this.label,
+    required this.tooltip,
     required this.isSelected,
     required this.onTap,
   });
@@ -284,7 +285,9 @@ class _SidebarNavItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bgColor = isSelected
-        ? (isDark ? AppTokens.primarySurfaceDark : AppTokens.primarySurfaceLight)
+        ? (isDark
+            ? AppTokens.primarySurfaceDark
+            : AppTokens.primarySurfaceLight)
         : Colors.transparent;
 
     final textColor = isSelected
@@ -293,27 +296,34 @@ class _SidebarNavItem extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 4),
-      child: Material(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-        child: InkWell(
-          onTap: onTap,
+      child: Tooltip(
+        message: tooltip,
+        child: Material(
+          color: bgColor,
           borderRadius: BorderRadius.circular(AppTokens.radiusButton),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Icon(icon, size: 20, color: textColor),
-                const SizedBox(width: 14),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: textColor,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    fontSize: 14,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+            hoverColor: isDark
+                ? AppTokens.surfaceAltDark.withValues(alpha: 0.5)
+                : AppTokens.surfaceAltLight,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              child: Row(
+                children: [
+                  Icon(icon, size: 18, color: textColor),
+                  const SizedBox(width: 12),
+                  Text(
+                    label,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: textColor,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontSize: 13.5,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

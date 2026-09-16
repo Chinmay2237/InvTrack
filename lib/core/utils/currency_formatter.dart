@@ -15,7 +15,8 @@ enum AppCurrency {
 }
 
 class CurrencyFormatter {
-  static String format(double amount, {AppCurrency currency = AppCurrency.usd}) {
+  static String format(double amount,
+      {AppCurrency currency = AppCurrency.usd}) {
     final formatter = NumberFormat.currency(
       locale: currency.locale,
       symbol: currency.symbol,

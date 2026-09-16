@@ -50,7 +50,8 @@ class ScanningNotifier extends StateNotifier<ScanningState> {
   }
 
   void addToBulkQueue(ScannedItemEntry entry) {
-    final existingIndex = state.bulkQueue.indexWhere((e) => e.barcode == entry.barcode);
+    final existingIndex =
+        state.bulkQueue.indexWhere((e) => e.barcode == entry.barcode);
     if (existingIndex >= 0) {
       final updated = List<ScannedItemEntry>.from(state.bulkQueue);
       updated[existingIndex].quantity += entry.quantity;
@@ -61,7 +62,8 @@ class ScanningNotifier extends StateNotifier<ScanningState> {
   }
 
   void removeFromBulkQueue(int index) {
-    final updated = List<ScannedItemEntry>.from(state.bulkQueue)..removeAt(index);
+    final updated = List<ScannedItemEntry>.from(state.bulkQueue)
+      ..removeAt(index);
     state = state.copyWith(bulkQueue: updated);
   }
 
@@ -70,6 +72,7 @@ class ScanningNotifier extends StateNotifier<ScanningState> {
   }
 }
 
-final scanningProvider = StateNotifierProvider<ScanningNotifier, ScanningState>((ref) {
+final scanningProvider =
+    StateNotifierProvider<ScanningNotifier, ScanningState>((ref) {
   return ScanningNotifier();
 });

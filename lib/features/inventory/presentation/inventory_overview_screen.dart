@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/theme/breakpoints.dart';
 import '../domain/entities/item_entity.dart';
@@ -11,10 +11,12 @@ class InventoryOverviewScreen extends ConsumerStatefulWidget {
   const InventoryOverviewScreen({super.key});
 
   @override
-  ConsumerState<InventoryOverviewScreen> createState() => _InventoryOverviewScreenState();
+  ConsumerState<InventoryOverviewScreen> createState() =>
+      _InventoryOverviewScreenState();
 }
 
-class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScreen> {
+class _InventoryOverviewScreenState
+    extends ConsumerState<InventoryOverviewScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -34,25 +36,26 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.box, color: AppTokens.primary, size: 22),
+            Icon(AppIcons.asset, color: AppTokens.primary, size: 22),
             SizedBox(width: 8),
             Text('Inventory Catalog'),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.download),
+            icon: const Icon(AppIcons.exportCsv),
             tooltip: 'Export CSV',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Exported Inventory catalog to CSV')),
+                const SnackBar(
+                    content: Text('Exported Inventory catalog to CSV')),
               );
             },
           ),
           const SizedBox(width: 8),
           ElevatedButton.icon(
             onPressed: () => context.go('/inventory/new'),
-            icon: const Icon(LucideIcons.plus, size: 18),
+            icon: const Icon(AppIcons.add, size: 18),
             label: const Text('Add Item'),
           ),
           const SizedBox(width: 12),
@@ -73,19 +76,22 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                         controller: _searchController,
                         decoration: InputDecoration(
                           hintText: 'Search items by name, SKU, or barcode...',
-                          prefixIcon: const Icon(LucideIcons.search, size: 18),
+                          prefixIcon: const Icon(AppIcons.search, size: 18),
                           suffixIcon: filter.searchQuery.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(LucideIcons.x, size: 18),
+                                  icon: const Icon(AppIcons.close, size: 18),
                                   onPressed: () {
                                     _searchController.clear();
-                                    ref.read(inventoryFilterProvider.notifier).state = filter.copyWith(searchQuery: '');
+                                    ref
+                                        .read(inventoryFilterProvider.notifier)
+                                        .state = filter.copyWith(searchQuery: '');
                                   },
                                 )
                               : null,
                         ),
                         onChanged: (val) {
-                          ref.read(inventoryFilterProvider.notifier).state = filter.copyWith(searchQuery: val);
+                          ref.read(inventoryFilterProvider.notifier).state =
+                              filter.copyWith(searchQuery: val);
                         },
                       ),
                     ),
@@ -94,9 +100,11 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                       label: const Text('Low Stock Only'),
                       selected: filter.lowStockOnly,
                       onSelected: (val) {
-                        ref.read(inventoryFilterProvider.notifier).state = filter.copyWith(lowStockOnly: val);
+                        ref.read(inventoryFilterProvider.notifier).state =
+                            filter.copyWith(lowStockOnly: val);
                       },
-                      avatar: const Icon(LucideIcons.triangle_alert, size: 14, color: AppTokens.warning),
+                      avatar: const Icon(AppIcons.lowStock,
+                          size: 14, color: AppTokens.warning),
                     ),
                   ],
                 ),
@@ -112,7 +120,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                             label: const Text('All Categories'),
                             selected: filter.categoryId == null,
                             onSelected: (_) {
-                              ref.read(inventoryFilterProvider.notifier).state = InventoryFilterState(
+                              ref.read(inventoryFilterProvider.notifier).state =
+                                  InventoryFilterState(
                                 searchQuery: filter.searchQuery,
                                 lowStockOnly: filter.lowStockOnly,
                               );
@@ -127,7 +136,9 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                                 label: Text(cat.name),
                                 selected: isSelected,
                                 onSelected: (val) {
-                                  ref.read(inventoryFilterProvider.notifier).state = filter.copyWith(
+                                  ref
+                                      .read(inventoryFilterProvider.notifier)
+                                      .state = filter.copyWith(
                                     categoryId: val ? cat.id : null,
                                   );
                                 },
@@ -156,7 +167,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(LucideIcons.package_open, size: 56, color: AppTokens.textDisabledLight),
+                        const Icon(AppIcons.asset,
+                            size: 56, color: AppTokens.textDisabledLight),
                         const SizedBox(height: 16),
                         Text(
                           'No inventory items found',
@@ -170,7 +182,7 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                         const SizedBox(height: 16),
                         ElevatedButton.icon(
                           onPressed: () => context.go('/inventory/new'),
-                          icon: const Icon(LucideIcons.plus, size: 18),
+                          icon: const Icon(AppIcons.add, size: 18),
                           label: const Text('Create First Item'),
                         ),
                       ],
@@ -193,7 +205,8 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                 }
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) => Center(child: Text('Error loading inventory: $err')),
+              error: (err, stack) =>
+                  Center(child: Text('Error loading inventory: $err')),
             ),
           ),
         ],
@@ -214,8 +227,11 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
             borderRadius: BorderRadius.circular(AppTokens.radiusButton),
           ),
           child: item.imageUrl != null && item.imageUrl!.startsWith('assets/')
-              ? Image.asset(item.imageUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(LucideIcons.box, color: AppTokens.primary))
-              : const Icon(LucideIcons.box, color: AppTokens.primary),
+              ? Image.asset(item.imageUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) =>
+                      const Icon(AppIcons.asset, color: AppTokens.primary))
+              : const Icon(AppIcons.asset, color: AppTokens.primary),
         ),
         title: Row(
           children: [
@@ -247,19 +263,25 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                 ),
                 child: Text(
                   item.sku,
-                  style: const TextStyle(fontSize: 10, fontFamily: 'Roboto', fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                      fontSize: 10,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w500),
                 ),
               ),
               const SizedBox(width: 8),
               if (item.barcode != null)
                 Text(
                   'Barcode: ${item.barcode}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 11),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(fontSize: 11),
                 ),
             ],
           ),
         ),
-        trailing: const Icon(LucideIcons.chevron_right, size: 18),
+        trailing: const Icon(AppIcons.forward, size: 18),
         onTap: () => context.go('/inventory/${item.id}'),
       ),
     );
@@ -300,9 +322,12 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                             color: AppTokens.primarySurfaceLight,
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Icon(LucideIcons.box, size: 18, color: AppTokens.primary),
+                          child: const Icon(AppIcons.asset,
+                              size: 18, color: AppTokens.primary),
                         ),
-                        Text(item.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(item.name,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -312,7 +337,9 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                   DataCell(
                     Text(
                       '\$${item.salePrice.toStringAsFixed(2)}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: AppTokens.primary),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTokens.primary),
                     ),
                   ),
                   DataCell(Text(item.unitOfMeasure.toUpperCase())),
@@ -320,14 +347,15 @@ class _InventoryOverviewScreenState extends ConsumerState<InventoryOverviewScree
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(LucideIcons.eye, size: 18),
+                          icon: const Icon(AppIcons.search, size: 18),
                           tooltip: 'View Details',
                           onPressed: () => context.go('/inventory/${item.id}'),
                         ),
                         IconButton(
-                          icon: const Icon(LucideIcons.pencil, size: 18),
+                          icon: const Icon(AppIcons.edit, size: 18),
                           tooltip: 'Edit Item',
-                          onPressed: () => context.go('/inventory/${item.id}/edit'),
+                          onPressed: () =>
+                              context.go('/inventory/${item.id}/edit'),
                         ),
                       ],
                     ),

@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invtrack/features/scanning/presentation/scanning_screen.dart';
 
 void main() {
-  testWidgets('ScanningScreen renders scan station title and mode chips', (WidgetTester tester) async {
+  testWidgets('ScanningScreen renders scan station title and mode chips',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: MaterialApp(

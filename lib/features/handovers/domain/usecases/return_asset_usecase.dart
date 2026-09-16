@@ -5,7 +5,8 @@ class ReturnAssetUseCase {
 
   ReturnAssetUseCase(this.repository);
 
-  Future<void> execute(String handoverId, DateTime returnDate, {String? notes}) async {
+  Future<void> execute(String handoverId, DateTime returnDate,
+      {String? notes}) async {
     await repository.returnAsset(handoverId, returnDate, notes: notes);
   }
 }

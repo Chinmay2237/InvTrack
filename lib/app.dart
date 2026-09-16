@@ -12,7 +12,7 @@ class InvTrackApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
 
     return MaterialApp.router(
-      title: 'InvTrack - Asset & Inventory Studio',
+      title: 'InvTrack - Asset & Inventory Control',
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
       theme: AppTheme.lightTheme(),

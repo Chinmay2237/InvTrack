@@ -24,12 +24,14 @@ void main() {
     updatedAt: DateTime.now(),
   );
 
-  test('AddItemUseCase delegates addItem call to InventoryRepository', () async {
+  test('AddItemUseCase delegates addItem call to InventoryRepository',
+      () async {
     when(() => mockRepository.addItem(testItem, initialQuantity: 10))
         .thenAnswer((_) async => Future.value());
 
     await useCase.execute(testItem, initialQuantity: 10);
 
-    verify(() => mockRepository.addItem(testItem, initialQuantity: 10)).called(1);
+    verify(() => mockRepository.addItem(testItem, initialQuantity: 10))
+        .called(1);
   });
 }

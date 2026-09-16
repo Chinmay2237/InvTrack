@@ -25,13 +25,18 @@ class HandoverRepositoryImpl implements HandoverRepository {
 
   @override
   Stream<List<HandoverEntity>> watchHandovers() {
-    return db.select(db.handovers).watch().map((rows) => rows.map(_mapToEntity).toList());
+    return db
+        .select(db.handovers)
+        .watch()
+        .map((rows) => rows.map(_mapToEntity).toList());
   }
 
   @override
   Stream<List<HandoverEntity>> watchActiveTemporaryHandovers() {
     final query = db.select(db.handovers)
-      ..where((t) => t.assignmentType.equals('temporary') & (t.status.equals('active') | t.status.equals('overdue')));
+      ..where((t) =>
+          t.assignmentType.equals('temporary') &
+          (t.status.equals('active') | t.status.equals('overdue')));
     return query.watch().map((rows) => rows.map(_mapToEntity).toList());
   }
 
@@ -63,8 +68,10 @@ class HandoverRepositoryImpl implements HandoverRepository {
   }
 
   @override
-  Future<void> returnAsset(String handoverId, DateTime returnDate, {String? notes}) async {
-    await (db.update(db.handovers)..where((t) => t.id.equals(handoverId))).write(
+  Future<void> returnAsset(String handoverId, DateTime returnDate,
+      {String? notes}) async {
+    await (db.update(db.handovers)..where((t) => t.id.equals(handoverId)))
+        .write(
       HandoversCompanion(
         status: const Value('returned'),
         returnDate: Value(returnDate),
@@ -84,7 +91,8 @@ class HandoverRepositoryImpl implements HandoverRepository {
 
   @override
   Future<void> extendDueDate(String handoverId, DateTime newDueDate) async {
-    await (db.update(db.handovers)..where((t) => t.id.equals(handoverId))).write(
+    await (db.update(db.handovers)..where((t) => t.id.equals(handoverId)))
+        .write(
       HandoversCompanion(
         dueDate: Value(newDueDate),
         status: const Value('active'),
@@ -97,7 +105,8 @@ class HandoverRepositoryImpl implements HandoverRepository {
             handoverId: handoverId,
             action: 'extended',
             timestamp: Value(DateTime.now()),
-            notes: Value('Extended due date to ${newDueDate.toString().split(' ')[0]}'),
+            notes: Value(
+                'Extended due date to ${newDueDate.toString().split(' ')[0]}'),
           ),
         );
   }

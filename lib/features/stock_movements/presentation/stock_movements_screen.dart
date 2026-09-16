@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:drift/drift.dart';
 import '../../../core/database/database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../inventory/domain/entities/item_entity.dart';
 import '../../inventory/presentation/providers/inventory_provider.dart';
 
 final allStockMovementsProvider = StreamProvider<List<StockMovement>>((ref) {
   final db = ref.watch(databaseProvider);
-  return (db.select(db.stockMovements)..orderBy([(t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc)])).watch();
+  return (db.select(db.stockMovements)
+        ..orderBy([
+          (t) => OrderingTerm(expression: t.createdAt, mode: OrderingMode.desc)
+        ]))
+      .watch();
 });
 
 class StockMovementsScreen extends ConsumerWidget {
@@ -31,20 +35,21 @@ class StockMovementsScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.arrow_left_right, color: AppTokens.primary, size: 22),
+            Icon(AppIcons.handovers, color: AppTokens.primary, size: 22),
             SizedBox(width: 8),
             Text('Stock Movement Ledger'),
           ],
         ),
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
+          icon: const Icon(AppIcons.back),
           onPressed: () => context.go('/'),
         ),
       ),
       body: movementsAsync.when(
         data: (movements) {
           if (movements.isEmpty) {
-            return const Center(child: Text('No stock movements recorded yet.'));
+            return const Center(
+                child: Text('No stock movements recorded yet.'));
           }
 
           return ListView.separated(
@@ -60,21 +65,27 @@ class StockMovementsScreen extends ConsumerWidget {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(14),
                   leading: CircleAvatar(
-                    backgroundColor: isIn ? AppTokens.primarySurfaceLight : AppTokens.criticalSurfaceLight,
+                    backgroundColor: isIn
+                        ? AppTokens.primarySurfaceLight
+                        : AppTokens.criticalSurfaceLight,
                     child: Icon(
-                      isIn ? LucideIcons.arrow_down_left : LucideIcons.arrow_up_right,
+                      isIn ? AppIcons.back : AppIcons.forward,
                       color: isIn ? AppTokens.primary : AppTokens.critical,
                       size: 20,
                     ),
                   ),
                   title: Row(
                     children: [
-                      Text(item?.name ?? 'Item ${m.itemId}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(item?.name ?? 'Item ${m.itemId}',
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: isIn ? AppTokens.primarySurfaceLight : AppTokens.criticalSurfaceLight,
+                          color: isIn
+                              ? AppTokens.primarySurfaceLight
+                              : AppTokens.criticalSurfaceLight,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
@@ -82,7 +93,8 @@ class StockMovementsScreen extends ConsumerWidget {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: isIn ? AppTokens.primary : AppTokens.critical,
+                            color:
+                                isIn ? AppTokens.primary : AppTokens.critical,
                           ),
                         ),
                       ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:drift/drift.dart' as drift;
 import '../../../core/database/database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import 'providers/scanning_provider.dart';
 import 'widgets/barcode_label_dialog.dart';
@@ -16,7 +16,8 @@ class ScanningScreen extends ConsumerStatefulWidget {
   ConsumerState<ScanningScreen> createState() => _ScanningScreenState();
 }
 
-class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTickerProviderStateMixin {
+class _ScanningScreenState extends ConsumerState<ScanningScreen>
+    with SingleTickerProviderStateMixin {
   late MobileScannerController _scannerController;
   late AnimationController _animationController;
   late Animation<double> _scanLineAnimation;
@@ -60,20 +61,22 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
     final scanState = ref.read(scanningProvider);
 
     // Query Drift Database for item with matching barcode or SKU
-    final itemQuery = await (db.select(db.items)..where((t) => t.barcode.equals(rawCode) | t.sku.equals(rawCode))).getSingleOrNull();
+    final itemQuery = await (db.select(db.items)
+          ..where((t) => t.barcode.equals(rawCode) | t.sku.equals(rawCode)))
+        .getSingleOrNull();
 
     if (!mounted) return;
 
     if (itemQuery != null) {
       if (scanState.isBulkMode) {
         ref.read(scanningProvider.notifier).addToBulkQueue(
-          ScannedItemEntry(
-            barcode: rawCode,
-            itemId: itemQuery.id,
-            name: itemQuery.name,
-            quantity: 1,
-          ),
-        );
+              ScannedItemEntry(
+                barcode: rawCode,
+                itemId: itemQuery.id,
+                name: itemQuery.name,
+                quantity: 1,
+              ),
+            );
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Added ${itemQuery.name} to bulk batch'),
@@ -86,12 +89,12 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
     } else {
       if (scanState.isBulkMode) {
         ref.read(scanningProvider.notifier).addToBulkQueue(
-          ScannedItemEntry(
-            barcode: rawCode,
-            name: 'New Item ($rawCode)',
-            quantity: 1,
-          ),
-        );
+              ScannedItemEntry(
+                barcode: rawCode,
+                name: 'New Item ($rawCode)',
+                quantity: 1,
+              ),
+            );
       } else {
         _showQuickAddBottomSheet(rawCode);
       }
@@ -113,7 +116,8 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTokens.radiusModal)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppTokens.radiusModal)),
       ),
       builder: (ctx) {
         return StatefulBuilder(
@@ -135,9 +139,11 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: AppTokens.primarySurfaceLight,
-                          borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                          borderRadius:
+                              BorderRadius.circular(AppTokens.radiusButton),
                         ),
-                        child: const Icon(LucideIcons.circle_check, color: AppTokens.primary, size: 24),
+                        child: const Icon(AppIcons.success,
+                            color: AppTokens.primary, size: 24),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -161,11 +167,18 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Action Type:', style: Theme.of(context).textTheme.bodyLarge),
+                      Text('Action Type:',
+                          style: Theme.of(context).textTheme.bodyLarge),
                       SegmentedButton<String>(
                         segments: const [
-                          ButtonSegment(value: 'in', label: Text('Stock In'), icon: Icon(LucideIcons.arrow_down_left, size: 16)),
-                          ButtonSegment(value: 'out', label: Text('Stock Out'), icon: Icon(LucideIcons.arrow_up_right, size: 16)),
+                          ButtonSegment(
+                              value: 'in',
+                              label: Text('Stock In'),
+                              icon: Icon(AppIcons.back, size: 16)),
+                          ButtonSegment(
+                              value: 'out',
+                              label: Text('Stock Out'),
+                              icon: Icon(AppIcons.forward, size: 16)),
                         ],
                         selected: {selectedMovement},
                         onSelectionChanged: (val) {
@@ -178,12 +191,15 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Adjust Quantity:', style: Theme.of(context).textTheme.bodyLarge),
+                      Text('Adjust Quantity:',
+                          style: Theme.of(context).textTheme.bodyLarge),
                       Row(
                         children: [
                           IconButton.outlined(
-                            icon: const Icon(LucideIcons.minus, size: 18),
-                            onPressed: adjustQty > 1 ? () => setModalState(() => adjustQty--) : null,
+                            icon: const Icon(AppIcons.edit, size: 18),
+                            onPressed: adjustQty > 1
+                                ? () => setModalState(() => adjustQty--)
+                                : null,
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -193,7 +209,7 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                             ),
                           ),
                           IconButton.outlined(
-                            icon: const Icon(LucideIcons.plus, size: 18),
+                            icon: const Icon(AppIcons.add, size: 18),
                             onPressed: () => setModalState(() => adjustQty++),
                           ),
                         ],
@@ -207,18 +223,22 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     child: ElevatedButton.icon(
                       onPressed: () async {
                         final db = ref.read(databaseProvider);
-                        final mainWh = (await db.select(db.warehouses).get()).firstOrNull;
+                        final mainWh =
+                            (await db.select(db.warehouses).get()).firstOrNull;
 
                         if (mainWh != null) {
                           final currentStock = await (db.select(db.stockLevels)
-                                ..where((t) => t.itemId.equals(item.id) & t.warehouseId.equals(mainWh.id)))
+                                ..where((t) =>
+                                    t.itemId.equals(item.id) &
+                                    t.warehouseId.equals(mainWh.id)))
                               .getSingleOrNull();
 
                           final newQty = selectedMovement == 'in'
                               ? (currentStock?.quantity ?? 0) + adjustQty
                               : (currentStock?.quantity ?? 0) - adjustQty;
 
-                          await (db.into(db.stockLevels)).insertOnConflictUpdate(
+                          await (db.into(db.stockLevels))
+                              .insertOnConflictUpdate(
                             StockLevelsCompanion.insert(
                               itemId: item.id,
                               warehouseId: mainWh.id,
@@ -228,12 +248,15 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
 
                           await db.into(db.stockMovements).insert(
                                 StockMovementsCompanion.insert(
-                                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                                  id: DateTime.now()
+                                      .millisecondsSinceEpoch
+                                      .toString(),
                                   itemId: item.id,
                                   targetWarehouseId: drift.Value(mainWh.id),
                                   movementType: selectedMovement,
                                   quantity: adjustQty,
-                                  notes: const drift.Value('Adjusted via Scan Station'),
+                                  notes: const drift.Value(
+                                      'Adjusted via Scan Station'),
                                 ),
                               );
                         }
@@ -241,12 +264,15 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                         if (mounted) {
                           Navigator.of(context).pop();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Stock updated for ${item.name}')),
+                            SnackBar(
+                                content:
+                                    Text('Stock updated for ${item.name}')),
                           );
                         }
                       },
-                      icon: const Icon(LucideIcons.check),
-                      label: Text('Confirm $selectedMovement ($adjustQty units)'),
+                      icon: const Icon(AppIcons.success),
+                      label:
+                          Text('Confirm $selectedMovement ($adjustQty units)'),
                     ),
                   ),
                 ],
@@ -267,7 +293,8 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTokens.radiusModal)),
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(AppTokens.radiusModal)),
       ),
       builder: (ctx) {
         return Padding(
@@ -287,16 +314,20 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: AppTokens.warningSurfaceLight,
-                      borderRadius: BorderRadius.circular(AppTokens.radiusButton),
+                      borderRadius:
+                          BorderRadius.circular(AppTokens.radiusButton),
                     ),
-                    child: const Icon(LucideIcons.circle_plus, color: AppTokens.warning, size: 24),
+                    child: const Icon(AppIcons.add,
+                        color: AppTokens.warning, size: 24),
                   ),
                   const SizedBox(width: 14),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Unrecognized Barcode', style: Theme.of(context).textTheme.titleMedium),
-                      Text('Quick-add item for barcode: $scannedCode', style: Theme.of(context).textTheme.bodyMedium),
+                      Text('Unrecognized Barcode',
+                          style: Theme.of(context).textTheme.titleMedium),
+                      Text('Quick-add item for barcode: $scannedCode',
+                          style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   ),
                 ],
@@ -313,7 +344,8 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     child: TextField(
                       controller: priceController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: 'Price (\$)', prefixText: '\$ '),
+                      decoration: const InputDecoration(
+                          labelText: 'Price (\$)', prefixText: '\$ '),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -321,7 +353,8 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     child: TextField(
                       controller: qtyController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(labelText: 'Initial Qty'),
+                      decoration:
+                          const InputDecoration(labelText: 'Initial Qty'),
                     ),
                   ),
                 ],
@@ -333,18 +366,21 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                 child: ElevatedButton.icon(
                   onPressed: () async {
                     final db = ref.read(databaseProvider);
-                    final itemId = 'item_${DateTime.now().millisecondsSinceEpoch}';
+                    final itemId =
+                        'item_${DateTime.now().millisecondsSinceEpoch}';
                     final qty = int.tryParse(qtyController.text) ?? 1;
                     final price = double.tryParse(priceController.text) ?? 0.0;
 
                     final categories = await db.select(db.categories).get();
                     final firstCat = categories.firstOrNull?.id;
-                    final mainWh = (await db.select(db.warehouses).get()).firstOrNull;
+                    final mainWh =
+                        (await db.select(db.warehouses).get()).firstOrNull;
 
                     await db.into(db.items).insert(
                           ItemsCompanion.insert(
                             id: itemId,
-                            sku: 'SKU-${scannedCode.substring(0, scannedCode.length > 6 ? 6 : scannedCode.length)}',
+                            sku:
+                                'SKU-${scannedCode.substring(0, scannedCode.length > 6 ? 6 : scannedCode.length)}',
                             name: nameController.text,
                             barcode: drift.Value(scannedCode),
                             categoryId: drift.Value(firstCat),
@@ -366,11 +402,13 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     if (mounted) {
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Created ${nameController.text} successfully!')),
+                        SnackBar(
+                            content: Text(
+                                'Created ${nameController.text} successfully!')),
                       );
                     }
                   },
-                  icon: const Icon(LucideIcons.check),
+                  icon: const Icon(AppIcons.success),
                   label: const Text('Save & Register Item'),
                 ),
               ),
@@ -390,7 +428,7 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.qr_code, color: AppTokens.primary, size: 22),
+            Icon(AppIcons.scanActive, color: AppTokens.primary, size: 22),
             SizedBox(width: 8),
             Text('Scan Station'),
           ],
@@ -399,18 +437,19 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
           FilterChip(
             label: Text(scanState.isBulkMode ? 'Bulk Scan ON' : 'Single Mode'),
             selected: scanState.isBulkMode,
-            onSelected: (_) => ref.read(scanningProvider.notifier).toggleBulkMode(),
+            onSelected: (_) =>
+                ref.read(scanningProvider.notifier).toggleBulkMode(),
             selectedColor: AppTokens.primarySurfaceLight,
             checkmarkColor: AppTokens.primary,
             avatar: Icon(
-              scanState.isBulkMode ? LucideIcons.layers : LucideIcons.scan,
+              scanState.isBulkMode ? AppIcons.assetGroup : AppIcons.scan,
               size: 16,
               color: scanState.isBulkMode ? AppTokens.primary : Colors.grey,
             ),
           ),
           const SizedBox(width: 8),
           IconButton(
-            icon: const Icon(LucideIcons.tag),
+            icon: const Icon(AppIcons.batchNumber),
             tooltip: 'Generate Asset Label',
             onPressed: () {
               showDialog(
@@ -440,12 +479,13 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     decoration: InputDecoration(
                       hintText: 'Enter barcode or SKU (e.g. 8901234567890)...',
                       isDense: true,
-                      prefixIcon: const Icon(LucideIcons.search, size: 18),
+                      prefixIcon: const Icon(AppIcons.search, size: 18),
                       suffixIcon: IconButton(
-                        icon: const Icon(LucideIcons.arrow_right, size: 18),
+                        icon: const Icon(AppIcons.forward, size: 18),
                         onPressed: () {
                           if (_manualInputController.text.trim().isNotEmpty) {
-                            _handleBarcodeDetected(_manualInputController.text.trim());
+                            _handleBarcodeDetected(
+                                _manualInputController.text.trim());
                             _manualInputController.clear();
                           }
                         },
@@ -462,13 +502,20 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                 const SizedBox(width: 10),
                 // Test Presets Dropdown for quick emulator/desktop testing
                 PopupMenuButton<String>(
-                  icon: const Icon(LucideIcons.flask_conical, color: AppTokens.primary),
+                  icon: const Icon(AppIcons.maintenance,
+                      color: AppTokens.primary),
                   tooltip: 'Simulate Test Scans',
                   onSelected: (code) => _handleBarcodeDetected(code),
                   itemBuilder: (context) => const [
-                    PopupMenuItem(value: '8901234567890', child: Text('Test Scan: Laptop Pro 15')),
-                    PopupMenuItem(value: '8901234567891', child: Text('Test Scan: Smartphone Ultra')),
-                    PopupMenuItem(value: '8901234567899', child: Text('Test Scan: Unrecognized Code')),
+                    PopupMenuItem(
+                        value: '8901234567890',
+                        child: Text('Test Scan: Laptop Pro 15')),
+                    PopupMenuItem(
+                        value: '8901234567891',
+                        child: Text('Test Scan: Smartphone Ultra')),
+                    PopupMenuItem(
+                        value: '8901234567899',
+                        child: Text('Test Scan: Unrecognized Code')),
                   ],
                 ),
               ],
@@ -498,7 +545,9 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     width: 280,
                     height: 280,
                     decoration: BoxDecoration(
-                      border: Border.all(color: AppTokens.primary.withValues(alpha: 0.8), width: 2),
+                      border: Border.all(
+                          color: AppTokens.primary.withValues(alpha: 0.8),
+                          width: 2),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Stack(
@@ -516,7 +565,8 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                                   color: AppTokens.primary,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppTokens.primary.withValues(alpha: 0.8),
+                                      color: AppTokens.primary
+                                          .withValues(alpha: 0.8),
                                       blurRadius: 8,
                                       spreadRadius: 2,
                                     ),
@@ -528,7 +578,9 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                         ),
                         Center(
                           child: Text(
-                            scanState.isBulkMode ? 'BULK SCANNING ACTIVE' : 'ALIGN BARCODE IN FRAME',
+                            scanState.isBulkMode
+                                ? 'BULK SCANNING ACTIVE'
+                                : 'ALIGN BARCODE IN FRAME',
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.9),
                               fontFamily: 'Poppins',
@@ -560,7 +612,8 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                     children: [
                       Row(
                         children: [
-                          const Icon(LucideIcons.layers, size: 18, color: AppTokens.primary),
+                          const Icon(AppIcons.assetGroup,
+                              size: 18, color: AppTokens.primary),
                           const SizedBox(width: 8),
                           Text(
                             'Bulk Queue (${scanState.bulkQueue.length} items)',
@@ -571,10 +624,12 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                       TextButton.icon(
                         onPressed: scanState.bulkQueue.isNotEmpty
                             ? () {
-                                ref.read(scanningProvider.notifier).clearBulkQueue();
+                                ref
+                                    .read(scanningProvider.notifier)
+                                    .clearBulkQueue();
                               }
                             : null,
-                        icon: const Icon(LucideIcons.trash, size: 16),
+                        icon: const Icon(AppIcons.delete, size: 16),
                         label: const Text('Clear All'),
                       ),
                     ],
@@ -596,41 +651,54 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                                   width: 150,
                                   padding: const EdgeInsets.all(12),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
                                             child: Text(
                                               item.name,
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
                                             ),
                                           ),
                                           IconButton(
-                                            icon: const Icon(LucideIcons.x, size: 14),
+                                            icon: const Icon(AppIcons.close,
+                                                size: 14),
                                             onPressed: () {
-                                              ref.read(scanningProvider.notifier).removeFromBulkQueue(index);
+                                              ref
+                                                  .read(
+                                                      scanningProvider.notifier)
+                                                  .removeFromBulkQueue(index);
                                             },
                                           ),
                                         ],
                                       ),
                                       Text(
                                         'Code: ${item.barcode}',
-                                        style: Theme.of(context).textTheme.bodyMedium,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
                                       ),
                                       const Spacer(),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
                                           color: AppTokens.primarySurfaceLight,
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           'Qty: ${item.quantity}',
-                                          style: const TextStyle(color: AppTokens.primary, fontWeight: FontWeight.bold),
+                                          style: const TextStyle(
+                                              color: AppTokens.primary,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ],
@@ -647,13 +715,17 @@ class _ScanningScreenState extends ConsumerState<ScanningScreen> with SingleTick
                       onPressed: scanState.bulkQueue.isNotEmpty
                           ? () {
                               final count = scanState.bulkQueue.length;
-                              ref.read(scanningProvider.notifier).clearBulkQueue();
+                              ref
+                                  .read(scanningProvider.notifier)
+                                  .clearBulkQueue();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Committed batch stock movements for $count items')),
+                                SnackBar(
+                                    content: Text(
+                                        'Committed batch stock movements for $count items')),
                               );
                             }
                           : null,
-                      icon: const Icon(LucideIcons.check),
+                      icon: const Icon(AppIcons.success),
                       label: const Text('Confirm All Batch Movements'),
                     ),
                   ),

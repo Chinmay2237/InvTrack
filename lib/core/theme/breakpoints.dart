@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 enum DeviceFormFactor {
-  compact,  // Phone (<600dp)
-  medium,   // Tablet (600 - 1200dp)
+  compact, // Phone (<600dp)
+  medium, // Tablet (600 - 1200dp)
   expanded, // Desktop / Web (>1200dp)
 }
 

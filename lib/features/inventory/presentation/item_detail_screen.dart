@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/database/database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../scanning/presentation/widgets/barcode_label_dialog.dart';
 import 'providers/inventory_provider.dart';
@@ -11,14 +11,19 @@ import 'providers/inventory_provider.dart';
 import '../../handovers/domain/entities/handover_entity.dart';
 import '../../handovers/presentation/providers/handover_provider.dart';
 
-final itemStockLevelsProvider = StreamProvider.family<List<StockLevel>, String>((ref, itemId) {
+final itemStockLevelsProvider =
+    StreamProvider.family<List<StockLevel>, String>((ref, itemId) {
   final db = ref.watch(databaseProvider);
-  return (db.select(db.stockLevels)..where((t) => t.itemId.equals(itemId))).watch();
+  return (db.select(db.stockLevels)..where((t) => t.itemId.equals(itemId)))
+      .watch();
 });
 
-final itemHandoversProvider = StreamProvider.family<List<HandoverEntity>, String>((ref, itemId) {
+final itemHandoversProvider =
+    StreamProvider.family<List<HandoverEntity>, String>((ref, itemId) {
   final repo = ref.watch(handoverRepositoryProvider);
-  return repo.watchHandovers().map((rows) => rows.where((h) => h.itemId == itemId).toList());
+  return repo
+      .watchHandovers()
+      .map((rows) => rows.where((h) => h.itemId == itemId).toList());
 });
 
 class ItemDetailScreen extends ConsumerWidget {
@@ -40,12 +45,12 @@ class ItemDetailScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('Item Detail'),
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
+          icon: const Icon(AppIcons.back),
           onPressed: () => context.go('/inventory'),
         ),
         actions: [
           IconButton(
-            icon: const Icon(LucideIcons.pencil),
+            icon: const Icon(AppIcons.edit),
             tooltip: 'Edit Item',
             onPressed: () => context.go('/inventory/$itemId/edit'),
           ),
@@ -64,7 +69,8 @@ class ItemDetailScreen extends ConsumerWidget {
           );
 
           final margin = item.salePrice > 0
-              ? (((item.salePrice - item.costPrice) / item.salePrice) * 100).toStringAsFixed(1)
+              ? (((item.salePrice - item.costPrice) / item.salePrice) * 100)
+                  .toStringAsFixed(1)
               : '0.0';
 
           return SingleChildScrollView(
@@ -84,9 +90,11 @@ class ItemDetailScreen extends ConsumerWidget {
                           height: 90,
                           decoration: BoxDecoration(
                             color: AppTokens.primarySurfaceLight,
-                            borderRadius: BorderRadius.circular(AppTokens.radiusModal),
+                            borderRadius:
+                                BorderRadius.circular(AppTokens.radiusModal),
                           ),
-                          child: const Icon(LucideIcons.box, size: 48, color: AppTokens.primary),
+                          child: const Icon(AppIcons.asset,
+                              size: 48, color: AppTokens.primary),
                         ),
                         const SizedBox(width: 20),
                         Expanded(
@@ -96,7 +104,8 @@ class ItemDetailScreen extends ConsumerWidget {
                               Row(
                                 children: [
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: AppTokens.primarySurfaceLight,
                                       borderRadius: BorderRadius.circular(4),
@@ -114,14 +123,17 @@ class ItemDetailScreen extends ConsumerWidget {
                                   if (item.barcode != null)
                                     Text(
                                       'Barcode: ${item.barcode}',
-                                      style: Theme.of(context).textTheme.bodyMedium,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
                                     ),
                                 ],
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 item.name,
-                                style: Theme.of(context).textTheme.displayMedium,
+                                style:
+                                    Theme.of(context).textTheme.displayMedium,
                               ),
                               if (item.description != null) ...[
                                 const SizedBox(height: 4),
@@ -147,7 +159,7 @@ class ItemDetailScreen extends ConsumerWidget {
                         onPressed: () {
                           context.go('/handovers/new');
                         },
-                        icon: const Icon(LucideIcons.user_plus, size: 18),
+                        icon: const Icon(AppIcons.assignment, size: 18),
                         label: const Text('Assign Asset Handover'),
                       ),
                     ),
@@ -163,7 +175,7 @@ class ItemDetailScreen extends ConsumerWidget {
                           ),
                         );
                       },
-                      icon: const Icon(LucideIcons.qr_code, size: 18),
+                      icon: const Icon(AppIcons.scanActive, size: 18),
                       label: const Text('Print Label'),
                     ),
                   ],
@@ -178,8 +190,10 @@ class ItemDetailScreen extends ConsumerWidget {
                         context,
                         title: 'Total Stock',
                         value: '$totalStock ${item.unitOfMeasure}',
-                        icon: LucideIcons.layers,
-                        color: totalStock <= item.reorderPoint ? AppTokens.warning : AppTokens.primary,
+                        icon: AppIcons.assetGroup,
+                        color: totalStock <= item.reorderPoint
+                            ? AppTokens.warning
+                            : AppTokens.primary,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -188,7 +202,7 @@ class ItemDetailScreen extends ConsumerWidget {
                         context,
                         title: 'Selling Price',
                         value: '\$${item.salePrice.toStringAsFixed(2)}',
-                        icon: LucideIcons.dollar_sign,
+                        icon: AppIcons.available,
                         color: AppTokens.primary,
                       ),
                     ),
@@ -198,7 +212,7 @@ class ItemDetailScreen extends ConsumerWidget {
                         context,
                         title: 'Profit Margin',
                         value: '$margin%',
-                        icon: LucideIcons.trending_up,
+                        icon: AppIcons.sort,
                         color: AppTokens.info,
                       ),
                     ),
@@ -213,13 +227,16 @@ class ItemDetailScreen extends ConsumerWidget {
                     margin: const EdgeInsets.only(bottom: 24),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? AppTokens.warningSurfaceDark : AppTokens.warningSurfaceLight,
+                      color: isDark
+                          ? AppTokens.warningSurfaceDark
+                          : AppTokens.warningSurfaceLight,
                       borderRadius: BorderRadius.circular(AppTokens.radiusCard),
                       border: Border.all(color: AppTokens.warning),
                     ),
                     child: Row(
                       children: [
-                        const Icon(LucideIcons.triangle_alert, color: AppTokens.warning, size: 24),
+                        const Icon(AppIcons.warning,
+                            color: AppTokens.warning, size: 24),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
@@ -227,7 +244,10 @@ class ItemDetailScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 'Low Stock Alert Triggered',
-                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
                                       color: AppTokens.warning,
                                     ),
                               ),
@@ -239,7 +259,8 @@ class ItemDetailScreen extends ConsumerWidget {
                           ),
                         ),
                         ElevatedButton(
-                          onPressed: () => context.go('/settings/purchase-orders'),
+                          onPressed: () =>
+                              context.go('/settings/purchase-orders'),
                           child: const Text('Reorder'),
                         ),
                       ],
@@ -261,7 +282,9 @@ class ItemDetailScreen extends ConsumerWidget {
                           child: Center(
                             child: Column(
                               children: [
-                                const Icon(LucideIcons.user_x, size: 36, color: AppTokens.textSecondaryLight),
+                                const Icon(AppIcons.assignment,
+                                    size: 36,
+                                    color: AppTokens.textSecondaryLight),
                                 const SizedBox(height: 8),
                                 Text(
                                   'No handovers logged for this item yet.',
@@ -289,10 +312,16 @@ class ItemDetailScreen extends ConsumerWidget {
                             leading: CircleAvatar(
                               backgroundColor: isOverdue
                                   ? AppTokens.criticalSurfaceLight
-                                  : (isPerm ? AppTokens.primarySurfaceLight : AppTokens.infoSurfaceLight),
+                                  : (isPerm
+                                      ? AppTokens.primarySurfaceLight
+                                      : AppTokens.infoSurfaceLight),
                               child: Icon(
-                                isPerm ? LucideIcons.user_check : LucideIcons.clock,
-                                color: isOverdue ? AppTokens.critical : (isPerm ? AppTokens.primary : AppTokens.info),
+                                isPerm ? AppIcons.assignment : AppIcons.history,
+                                color: isOverdue
+                                    ? AppTokens.critical
+                                    : (isPerm
+                                        ? AppTokens.primary
+                                        : AppTokens.info),
                                 size: 20,
                               ),
                             ),
@@ -300,13 +329,17 @@ class ItemDetailScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   'Assigned to ${h.employeeId}',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(width: 8),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
                                   decoration: BoxDecoration(
-                                    color: isPerm ? AppTokens.primarySurfaceLight : AppTokens.infoSurfaceLight,
+                                    color: isPerm
+                                        ? AppTokens.primarySurfaceLight
+                                        : AppTokens.infoSurfaceLight,
                                     borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
@@ -314,7 +347,9 @@ class ItemDetailScreen extends ConsumerWidget {
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
-                                      color: isPerm ? AppTokens.primary : AppTokens.info,
+                                      color: isPerm
+                                          ? AppTokens.primary
+                                          : AppTokens.info,
                                     ),
                                   ),
                                 ),
@@ -324,15 +359,20 @@ class ItemDetailScreen extends ConsumerWidget {
                               'Project: ${h.projectName ?? "General"} | Date: ${h.assignedDate.toString().split(' ')[0]}',
                             ),
                             trailing: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: isOverdue ? AppTokens.criticalSurfaceLight : AppTokens.primarySurfaceLight,
+                                color: isOverdue
+                                    ? AppTokens.criticalSurfaceLight
+                                    : AppTokens.primarySurfaceLight,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               child: Text(
                                 h.status.toUpperCase(),
                                 style: TextStyle(
-                                  color: isOverdue ? AppTokens.critical : AppTokens.primary,
+                                  color: isOverdue
+                                      ? AppTokens.critical
+                                      : AppTokens.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 11,
                                 ),

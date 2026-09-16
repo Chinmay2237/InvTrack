@@ -23,11 +23,13 @@ abstract class AppBottomSheet {
       builder: (context) {
         return Container(
           decoration: BoxDecoration(
-            color: backgroundColor ?? (isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight),
+            color: backgroundColor ??
+                (isDark ? AppTokens.surfaceDark : AppTokens.surfaceLight),
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(AppTokens.radiusModal),
             ),
-            boxShadow: isDark ? AppTokens.shadowModalDark : AppTokens.shadowModalLight,
+            boxShadow:
+                isDark ? AppTokens.shadowModalDark : AppTokens.shadowModalLight,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -40,7 +42,9 @@ abstract class AppBottomSheet {
                     width: 38,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: isDark ? AppTokens.textDisabledDark : AppTokens.textDisabledLight,
+                      color: isDark
+                          ? AppTokens.textDisabledDark
+                          : AppTokens.textDisabledLight,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/tokens.dart';
 
 class BarcodeLabelDialog extends StatelessWidget {
@@ -35,7 +36,8 @@ class BarcodeLabelDialog extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(LucideIcons.qr_code, color: AppTokens.primary, size: 22),
+                    const Icon(AppIcons.scanActive,
+                        color: AppTokens.primary, size: 22),
                     const SizedBox(width: 8),
                     Text(
                       'Printable Asset Label',
@@ -44,7 +46,7 @@ class BarcodeLabelDialog extends StatelessWidget {
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(LucideIcons.x, size: 20),
+                  icon: const Icon(AppIcons.close, size: 20),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -63,8 +65,7 @@ class BarcodeLabelDialog extends StatelessWidget {
                 children: [
                   Text(
                     'INVTRACK ASSET TAG',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
+                    style: GoogleFonts.plusJakartaSans(
                       fontWeight: FontWeight.w700,
                       fontSize: 11,
                       letterSpacing: 1.2,
@@ -109,11 +110,12 @@ class BarcodeLabelDialog extends StatelessWidget {
                   child: OutlinedButton.icon(
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Label PDF exported successfully')),
+                        const SnackBar(
+                            content: Text('Label PDF exported successfully')),
                       );
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(LucideIcons.download, size: 18),
+                    icon: const Icon(AppIcons.download, size: 18),
                     label: const Text('Export Label'),
                   ),
                 ),
@@ -126,7 +128,7 @@ class BarcodeLabelDialog extends StatelessWidget {
                       );
                       Navigator.of(context).pop();
                     },
-                    icon: const Icon(LucideIcons.printer, size: 18),
+                    icon: const Icon(AppIcons.exportPdf, size: 18),
                     label: const Text('Print Label'),
                   ),
                 ),

@@ -61,7 +61,8 @@ final itemsStreamProvider = StreamProvider<List<ItemEntity>>((ref) {
   );
 });
 
-final itemDetailProvider = StreamProvider.family<ItemEntity?, String>((ref, itemId) {
+final itemDetailProvider =
+    StreamProvider.family<ItemEntity?, String>((ref, itemId) {
   final repo = ref.watch(inventoryRepositoryProvider);
   return Stream.fromFuture(repo.getItemById(itemId));
 });

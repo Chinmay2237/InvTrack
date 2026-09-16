@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/database/database.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 
 final suppliersStreamProvider = StreamProvider<List<Supplier>>((ref) {
@@ -22,13 +22,13 @@ class SuppliersOverviewScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.truck, color: AppTokens.primary, size: 22),
+            Icon(AppIcons.supplier, color: AppTokens.primary, size: 22),
             SizedBox(width: 8),
             Text('Supplier Directory'),
           ],
         ),
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
+          icon: const Icon(AppIcons.back),
           onPressed: () => context.go('/settings'),
         ),
       ),
@@ -39,7 +39,8 @@ class SuppliersOverviewScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(LucideIcons.truck, size: 48, color: AppTokens.textSecondaryLight),
+                  Icon(AppIcons.supplier,
+                      size: 48, color: AppTokens.textSecondaryLight),
                   SizedBox(height: 12),
                   Text('No suppliers registered yet.'),
                 ],
@@ -56,11 +57,15 @@ class SuppliersOverviewScreen extends ConsumerWidget {
                 child: ListTile(
                   leading: const CircleAvatar(
                     backgroundColor: AppTokens.primarySurfaceLight,
-                    child: Icon(LucideIcons.building, color: AppTokens.primary, size: 20),
+                    child: Icon(AppIcons.supplier,
+                        color: AppTokens.primary, size: 20),
                   ),
-                  title: Text(s.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Contact: ${s.contactPerson ?? "N/A"} | Phone: ${s.phone ?? "N/A"}'),
-                  trailing: Text('${s.leadTimeDays}d lead time', style: Theme.of(context).textTheme.labelSmall),
+                  title: Text(s.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(
+                      'Contact: ${s.contactPerson ?? "N/A"} | Phone: ${s.phone ?? "N/A"}'),
+                  trailing: Text('${s.leadTimeDays}d lead time',
+                      style: Theme.of(context).textTheme.labelSmall),
                 ),
               );
             },

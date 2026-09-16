@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../dashboard/presentation/providers/dashboard_provider.dart';
 
@@ -10,10 +10,12 @@ class ReportsAnalyticsScreen extends ConsumerStatefulWidget {
   const ReportsAnalyticsScreen({super.key});
 
   @override
-  ConsumerState<ReportsAnalyticsScreen> createState() => _ReportsAnalyticsScreenState();
+  ConsumerState<ReportsAnalyticsScreen> createState() =>
+      _ReportsAnalyticsScreenState();
 }
 
-class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen> {
+class _ReportsAnalyticsScreenState
+    extends ConsumerState<ReportsAnalyticsScreen> {
   int _rangeDays = 30;
 
   @override
@@ -24,13 +26,14 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.chart_bar, color: AppTokens.primary, size: 22),
+            Icon(AppIcons.dashboard, color: AppTokens.primary, size: 22),
             SizedBox(width: 8),
             Text('Reports & Inventory Valuation'),
           ],
         ),
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
+          tooltip: 'Back to Dashboard',
+          icon: const Icon(AppIcons.back),
           onPressed: () => context.go('/'),
         ),
       ),
@@ -48,9 +51,11 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.calendar, size: 18, color: AppTokens.primary),
+                        const Icon(AppIcons.calendar,
+                            size: 18, color: AppTokens.primary),
                         const SizedBox(width: 8),
-                        Text('Reporting Window:', style: Theme.of(context).textTheme.titleMedium),
+                        Text('Reporting Window:',
+                            style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(width: 12),
                         SegmentedButton<int>(
                           segments: const [
@@ -59,7 +64,8 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                             ButtonSegment(value: 90, label: Text('90 Days')),
                           ],
                           selected: {_rangeDays},
-                          onSelectionChanged: (val) => setState(() => _rangeDays = val.first),
+                          onSelectionChanged: (val) =>
+                              setState(() => _rangeDays = val.first),
                         ),
                       ],
                     ),
@@ -68,20 +74,24 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                         OutlinedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Exported Analytics Report to CSV')),
+                              const SnackBar(
+                                  content:
+                                      Text('Exported Analytics Report to CSV')),
                             );
                           },
-                          icon: const Icon(LucideIcons.download, size: 16),
+                          icon: const Icon(AppIcons.exportCsv, size: 16),
                           label: const Text('Export CSV'),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton.icon(
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Generated Valuation PDF Report')),
+                              const SnackBar(
+                                  content:
+                                      Text('Generated Valuation PDF Report')),
                             );
                           },
-                          icon: const Icon(LucideIcons.file_text, size: 16),
+                          icon: const Icon(AppIcons.exportPdf, size: 16),
                           label: const Text('Export PDF'),
                         ),
                       ],
@@ -102,7 +112,7 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                         context,
                         title: 'Total Stock Asset Valuation',
                         value: '\$${kpis.totalStockValue.toStringAsFixed(2)}',
-                        icon: LucideIcons.dollar_sign,
+                        icon: AppIcons.stock,
                         color: AppTokens.primary,
                       ),
                     ),
@@ -112,7 +122,7 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                         context,
                         title: 'Active Asset Handovers',
                         value: '${kpis.assignedAssetsCount} Assets',
-                        icon: LucideIcons.user_check,
+                        icon: AppIcons.assignment,
                         color: AppTokens.info,
                       ),
                     ),
@@ -122,7 +132,7 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                         context,
                         title: 'Reorder Attention Needed',
                         value: '${kpis.lowStockCount} Items',
-                        icon: LucideIcons.triangle_alert,
+                        icon: AppIcons.warning,
                         color: AppTokens.warning,
                       ),
                     ),
@@ -141,7 +151,8 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Stock Allocation by Warehouse Location', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Stock Allocation by Warehouse Location',
+                        style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 20),
                     SizedBox(
                       height: 180,
@@ -149,23 +160,39 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
                         BarChartData(
                           alignment: BarChartAlignment.spaceAround,
                           barGroups: [
-                            BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 180, color: AppTokens.primary, width: 24)]),
-                            BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 85, color: AppTokens.info, width: 24)]),
+                            BarChartGroupData(x: 0, barRods: [
+                              BarChartRodData(
+                                  toY: 180, color: AppTokens.primary, width: 24)
+                            ]),
+                            BarChartGroupData(x: 1, barRods: [
+                              BarChartRodData(
+                                  toY: 85,
+                                  color: AppTokens.secondaryAccent,
+                                  width: 24)
+                            ]),
                           ],
                           titlesData: FlTitlesData(
-                            leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 30)),
+                            leftTitles: const AxisTitles(
+                                sideTitles: SideTitles(
+                                    showTitles: true, reservedSize: 30)),
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 getTitlesWidget: (val, meta) {
-                                  if (val == 0) return const Text('Main Logistics Center');
-                                  if (val == 1) return const Text('Project Site Alpha');
+                                  if (val == 0) {
+                                    return const Text('Main Logistics Center');
+                                  }
+                                  if (val == 1) {
+                                    return const Text('Project Site Alpha');
+                                  }
                                   return const Text('');
                                 },
                               ),
                             ),
-                            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                            rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
+                            topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false)),
                           ),
                         ),
                       ),
@@ -177,29 +204,33 @@ class _ReportsAnalyticsScreenState extends ConsumerState<ReportsAnalyticsScreen>
             const SizedBox(height: 24),
 
             // Strategic Insights List (Section 6.8 spec)
-            Text('Strategic Inventory Insights', style: Theme.of(context).textTheme.titleMedium),
+            Text('Strategic Inventory Insights',
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             _buildInsightTile(
               context,
               title: 'High Asset Value Concentration in Electronics',
-              desc: '75% of total stock valuation resides in Laptop Pro 15 and Smartphone Ultra inventory.',
-              icon: LucideIcons.trending_up,
+              desc:
+                  '75% of total stock valuation resides in Laptop Pro 15 and Smartphone Ultra inventory.',
+              icon: AppIcons.stock,
               color: AppTokens.primary,
             ),
             const SizedBox(height: 8),
             _buildInsightTile(
               context,
               title: 'Overdue Return Flag on Field Testing Campaign',
-              desc: 'Smartphone Ultra issued to Bob Jones is past due return date by 2 days.',
-              icon: LucideIcons.clock,
+              desc:
+                  'Smartphone Ultra issued to Bob Jones is past due return date by 2 days.',
+              icon: AppIcons.history,
               color: AppTokens.critical,
             ),
             const SizedBox(height: 8),
             _buildInsightTile(
               context,
               title: 'Slow-Moving Stock Warning: Office Coffee Maker',
-              desc: 'Zero stock movement recorded over the past 30 days. Consider re-allocating to Site B.',
-              icon: LucideIcons.triangle_alert,
+              desc:
+                  'Zero stock movement recorded over the past 30 days. Consider re-allocating to Site B.',
+              icon: AppIcons.warning,
               color: AppTokens.warning,
             ),
           ],

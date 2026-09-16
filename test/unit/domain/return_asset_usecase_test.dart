@@ -14,13 +14,15 @@ void main() {
     useCase = ReturnAssetUseCase(mockRepository);
   });
 
-  test('ReturnAssetUseCase delegates returnAsset call to HandoverRepository', () async {
+  test('ReturnAssetUseCase delegates returnAsset call to HandoverRepository',
+      () async {
     final returnDate = DateTime.now();
-    when(() => mockRepository.returnAsset('h_1', returnDate, notes: 'Returned safely'))
-        .thenAnswer((_) async => Future.value());
+    when(() => mockRepository.returnAsset('h_1', returnDate,
+        notes: 'Returned safely')).thenAnswer((_) async => Future.value());
 
     await useCase.execute('h_1', returnDate, notes: 'Returned safely');
 
-    verify(() => mockRepository.returnAsset('h_1', returnDate, notes: 'Returned safely')).called(1);
+    verify(() => mockRepository.returnAsset('h_1', returnDate,
+        notes: 'Returned safely')).called(1);
   });
 }

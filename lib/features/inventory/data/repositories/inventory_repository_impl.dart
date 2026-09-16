@@ -28,12 +28,14 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Stream<List<ItemEntity>> watchItems({String? searchQuery, String? categoryId, bool lowStockOnly = false}) {
+  Stream<List<ItemEntity>> watchItems(
+      {String? searchQuery, String? categoryId, bool lowStockOnly = false}) {
     var query = db.select(db.items);
 
     if (searchQuery != null && searchQuery.trim().isNotEmpty) {
       final search = '%${searchQuery.trim()}%';
-      query.where((t) => t.name.like(search) | t.sku.like(search) | t.barcode.like(search));
+      query.where((t) =>
+          t.name.like(search) | t.sku.like(search) | t.barcode.like(search));
     }
 
     if (categoryId != null) {
@@ -45,7 +47,8 @@ class InventoryRepositoryImpl implements InventoryRepository {
 
   @override
   Future<ItemEntity?> getItemById(String id) async {
-    final row = await (db.select(db.items)..where((t) => t.id.equals(id))).getSingleOrNull();
+    final row = await (db.select(db.items)..where((t) => t.id.equals(id)))
+        .getSingleOrNull();
     return row != null ? _mapToEntity(row) : null;
   }
 
@@ -102,13 +105,17 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<void> adjustStock(String itemId, String warehouseId, int deltaQuantity, String movementType, String? notes) async {
+  Future<void> adjustStock(String itemId, String warehouseId, int deltaQuantity,
+      String movementType, String? notes) async {
     final currentStock = await (db.select(db.stockLevels)
-          ..where((t) => t.itemId.equals(itemId) & t.warehouseId.equals(warehouseId)))
+          ..where((t) =>
+              t.itemId.equals(itemId) & t.warehouseId.equals(warehouseId)))
         .getSingleOrNull();
 
     final currentQty = currentStock?.quantity ?? 0;
-    final newQty = movementType == 'in' ? currentQty + deltaQuantity : currentQty - deltaQuantity;
+    final newQty = movementType == 'in'
+        ? currentQty + deltaQuantity
+        : currentQty - deltaQuantity;
 
     await db.into(db.stockLevels).insertOnConflictUpdate(
           StockLevelsCompanion.insert(

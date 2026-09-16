@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:invtrack/app.dart';
 
 void main() {
-  testWidgets('SplashScreen renders logo title and navigates to Dashboard', (WidgetTester tester) async {
+  testWidgets('SplashScreen renders logo title and navigates to Dashboard',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: InvTrackApp(),
@@ -11,10 +12,10 @@ void main() {
     );
 
     // Initial frame shows SplashScreen
-    expect(find.text('InvTrack v2'), findsOneWidget);
-    expect(find.text('Commercial Asset & Warehouse Studio'), findsOneWidget);
+    expect(find.text('InvTrack'), findsWidgets);
+    expect(find.text('Inventory, without the friction.'), findsOneWidget);
 
-    // Advance time past 1800ms splash delay
+    // Advance time past splash delay
     await tester.pump(const Duration(milliseconds: 2000));
     await tester.pump(const Duration(milliseconds: 500));
 

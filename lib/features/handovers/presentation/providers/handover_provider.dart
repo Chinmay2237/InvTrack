@@ -33,7 +33,8 @@ final handoversListProvider = StreamProvider<List<HandoverEntity>>((ref) {
   return repo.watchHandovers();
 });
 
-final activeTemporaryHandoversProvider = StreamProvider<List<HandoverEntity>>((ref) {
+final activeTemporaryHandoversProvider =
+    StreamProvider<List<HandoverEntity>>((ref) {
   final repo = ref.watch(handoverRepositoryProvider);
   return repo.watchActiveTemporaryHandovers();
 });

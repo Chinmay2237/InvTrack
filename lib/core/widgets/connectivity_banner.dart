@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
+import '../theme/app_icons.dart';
 import '../theme/tokens.dart';
 
 final isOfflineProvider = StateProvider<bool>((ref) => false);
@@ -31,12 +31,13 @@ class ConnectivityBannerWrapper extends ConsumerWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: const BoxDecoration(
-                border: Border(bottom: BorderSide(color: AppTokens.warning, width: 1)),
+                border: Border(
+                    bottom: BorderSide(color: AppTokens.warning, width: 1)),
               ),
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(LucideIcons.wifi_off, size: 14, color: AppTokens.warning),
+                  Icon(AppIcons.offline, size: 14, color: AppTokens.warning),
                   SizedBox(width: 8),
                   Text(
                     'Offline Mode Active — SQLite Local Database Synced',

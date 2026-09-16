@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import '../../inventory/presentation/providers/inventory_provider.dart';
 import 'providers/handover_provider.dart';
@@ -34,7 +34,9 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
   }
 
   Future<void> _submitHandover() async {
-    if (!_formKey.currentState!.validate() || _selectedItemId == null || _selectedEmployeeId == null) {
+    if (!_formKey.currentState!.validate() ||
+        _selectedItemId == null ||
+        _selectedEmployeeId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select an item and an employee')),
       );
@@ -51,11 +53,15 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
       itemId: _selectedItemId!,
       employeeId: _selectedEmployeeId!,
       assignmentType: _assignmentType,
-      projectName: _projectController.text.trim().isEmpty ? null : _projectController.text.trim(),
+      projectName: _projectController.text.trim().isEmpty
+          ? null
+          : _projectController.text.trim(),
       dueDate: _assignmentType == 'temporary' ? _dueDate : null,
       assignedDate: now,
       status: 'active',
-      notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
+      notes: _notesController.text.trim().isEmpty
+          ? null
+          : _notesController.text.trim(),
     );
 
     await ref.read(createHandoverUseCaseProvider).execute(entity);
@@ -78,7 +84,7 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
       appBar: AppBar(
         title: const Text('Assign Asset Handover'),
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
+          icon: const Icon(AppIcons.back),
           onPressed: () => context.go('/handovers'),
         ),
       ),
@@ -93,12 +99,19 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Assignment Type', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Assignment Type',
+                        style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 12),
                     SegmentedButton<String>(
                       segments: const [
-                        ButtonSegment(value: 'permanent', label: Text('Permanent Issue'), icon: Icon(LucideIcons.user_check, size: 16)),
-                        ButtonSegment(value: 'temporary', label: Text('Temporary Borrow'), icon: Icon(LucideIcons.clock, size: 16)),
+                        ButtonSegment(
+                            value: 'permanent',
+                            label: Text('Permanent Issue'),
+                            icon: Icon(AppIcons.assignment, size: 16)),
+                        ButtonSegment(
+                            value: 'temporary',
+                            label: Text('Temporary Borrow'),
+                            icon: Icon(AppIcons.history, size: 16)),
                       ],
                       selected: {_assignmentType},
                       onSelectionChanged: (val) {
@@ -116,20 +129,25 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Select Asset & Employee', style: Theme.of(context).textTheme.titleMedium),
+                    Text('Select Asset & Employee',
+                        style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 16),
                     itemsAsync.when(
                       data: (items) {
                         return DropdownButtonFormField<String>(
-                          initialValue: _selectedItemId ?? items.firstOrNull?.id,
-                          decoration: const InputDecoration(labelText: 'Select Inventory Item *', prefixIcon: Icon(LucideIcons.box, size: 18)),
+                          initialValue:
+                              _selectedItemId ?? items.firstOrNull?.id,
+                          decoration: const InputDecoration(
+                              labelText: 'Select Inventory Item *',
+                              prefixIcon: Icon(AppIcons.asset, size: 18)),
                           items: items
                               .map((i) => DropdownMenuItem(
                                     value: i.id,
                                     child: Text('${i.name} (SKU: ${i.sku})'),
                                   ))
                               .toList(),
-                          onChanged: (val) => setState(() => _selectedItemId = val),
+                          onChanged: (val) =>
+                              setState(() => _selectedItemId = val),
                         );
                       },
                       loading: () => const CircularProgressIndicator(),
@@ -139,15 +157,20 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
                     employeesAsync.when(
                       data: (employees) {
                         return DropdownButtonFormField<String>(
-                          initialValue: _selectedEmployeeId ?? employees.firstOrNull?.id,
-                          decoration: const InputDecoration(labelText: 'Assign to Employee *', prefixIcon: Icon(LucideIcons.user, size: 18)),
+                          initialValue:
+                              _selectedEmployeeId ?? employees.firstOrNull?.id,
+                          decoration: const InputDecoration(
+                              labelText: 'Assign to Employee *',
+                              prefixIcon: Icon(AppIcons.user, size: 18)),
                           items: employees
                               .map((e) => DropdownMenuItem(
                                     value: e.id,
-                                    child: Text('${e.name} (${e.department ?? "Staff"})'),
+                                    child: Text(
+                                        '${e.name} (${e.department ?? "Staff"})'),
                                   ))
                               .toList(),
-                          onChanged: (val) => setState(() => _selectedEmployeeId = val),
+                          onChanged: (val) =>
+                              setState(() => _selectedEmployeeId = val),
                         );
                       },
                       loading: () => const CircularProgressIndicator(),
@@ -158,7 +181,7 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
                       controller: _projectController,
                       decoration: const InputDecoration(
                         labelText: 'Project Name (e.g. Core Dev / Site Alpha)',
-                        prefixIcon: Icon(LucideIcons.briefcase, size: 18),
+                        prefixIcon: Icon(AppIcons.category, size: 18),
                       ),
                     ),
                   ],
@@ -173,19 +196,24 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Temporary Due Date', style: Theme.of(context).textTheme.titleMedium),
+                      Text('Temporary Due Date',
+                          style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 12),
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(LucideIcons.calendar, color: AppTokens.primary),
-                        title: Text('Due Return Date: ${_dueDate.toString().split(' ')[0]}'),
+                        leading: const Icon(AppIcons.calendar,
+                            color: AppTokens.primary),
+                        title: Text(
+                            'Due Return Date: ${_dueDate.toString().split(' ')[0]}'),
                         trailing: OutlinedButton(
                           onPressed: () async {
                             final picked = await showDatePicker(
                               context: context,
-                              initialDate: _dueDate ?? DateTime.now().add(const Duration(days: 14)),
+                              initialDate: _dueDate ??
+                                  DateTime.now().add(const Duration(days: 14)),
                               firstDate: DateTime.now(),
-                              lastDate: DateTime.now().add(const Duration(days: 365)),
+                              lastDate:
+                                  DateTime.now().add(const Duration(days: 365)),
                             );
                             if (picked != null) {
                               setState(() => _dueDate = picked);
@@ -204,7 +232,7 @@ class _HandoverFormScreenState extends ConsumerState<HandoverFormScreen> {
               height: 50,
               child: ElevatedButton.icon(
                 onPressed: _isLoading ? null : _submitHandover,
-                icon: const Icon(LucideIcons.check),
+                icon: const Icon(AppIcons.success),
                 label: const Text('Confirm Asset Handover'),
               ),
             ),

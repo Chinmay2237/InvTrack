@@ -6,7 +6,8 @@ import 'package:invtrack/app.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('End-to-end integration test: App startup and navigation shell', (WidgetTester tester) async {
+  testWidgets('End-to-end integration test: App startup and navigation shell',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       const ProviderScope(
         child: InvTrackApp(),

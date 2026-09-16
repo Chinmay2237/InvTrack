@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/database/database_provider.dart';
+import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
 import 'providers/purchase_order_provider.dart';
 
@@ -17,13 +17,13 @@ class PurchaseOrdersOverviewScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(LucideIcons.file_text, color: AppTokens.primary, size: 22),
+            Icon(AppIcons.purchaseOrder, color: AppTokens.primary, size: 22),
             SizedBox(width: 8),
             Text('Purchase Orders'),
           ],
         ),
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrow_left),
+          icon: const Icon(AppIcons.back),
           onPressed: () => context.go('/settings'),
         ),
       ),
@@ -34,7 +34,8 @@ class PurchaseOrdersOverviewScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(LucideIcons.file_text, size: 48, color: AppTokens.textSecondaryLight),
+                  Icon(AppIcons.purchaseOrder,
+                      size: 48, color: AppTokens.textSecondaryLight),
                   SizedBox(height: 12),
                   Text('No purchase orders registered.'),
                 ],
@@ -52,28 +53,37 @@ class PurchaseOrdersOverviewScreen extends ConsumerWidget {
               return Card(
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: isReceived ? AppTokens.primarySurfaceLight : AppTokens.warningSurfaceLight,
+                    backgroundColor: isReceived
+                        ? AppTokens.primarySurfaceLight
+                        : AppTokens.warningSurfaceLight,
                     child: Icon(
-                      isReceived ? LucideIcons.circle_check : LucideIcons.clock,
+                      isReceived ? AppIcons.success : AppIcons.history,
                       color: isReceived ? AppTokens.primary : AppTokens.warning,
                       size: 20,
                     ),
                   ),
-                  title: Text('PO #${po.poNumber}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  subtitle: Text('Supplier: ${po.supplierId} | Items: ${po.items.length} | Created: ${po.createdAt.toString().split(' ')[0]}'),
+                  title: Text('PO #${po.poNumber}',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(
+                      'Supplier: ${po.supplierId} | Items: ${po.items.length} | Created: ${po.createdAt.toString().split(' ')[0]}'),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: isReceived ? AppTokens.primarySurfaceLight : AppTokens.warningSurfaceLight,
+                          color: isReceived
+                              ? AppTokens.primarySurfaceLight
+                              : AppTokens.warningSurfaceLight,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
                           po.status.toUpperCase(),
                           style: TextStyle(
-                            color: isReceived ? AppTokens.primary : AppTokens.warning,
+                            color: isReceived
+                                ? AppTokens.primary
+                                : AppTokens.warning,
                             fontWeight: FontWeight.bold,
                             fontSize: 10,
                           ),
@@ -84,17 +94,23 @@ class PurchaseOrdersOverviewScreen extends ConsumerWidget {
                         ElevatedButton.icon(
                           onPressed: () async {
                             final db = ref.read(databaseProvider);
-                            final mainWh = (await db.select(db.warehouses).get()).firstOrNull;
+                            final mainWh =
+                                (await db.select(db.warehouses).get())
+                                    .firstOrNull;
                             if (mainWh != null) {
-                              await ref.read(receivePurchaseOrderUseCaseProvider).execute(po.id, mainWh.id);
+                              await ref
+                                  .read(receivePurchaseOrderUseCaseProvider)
+                                  .execute(po.id, mainWh.id);
                               if (context.mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Received PO #${po.poNumber} & incremented stock levels')),
+                                  SnackBar(
+                                      content: Text(
+                                          'Received PO #${po.poNumber} & incremented stock levels')),
                                 );
                               }
                             }
                           },
-                          icon: const Icon(LucideIcons.arrow_down_left, size: 14),
+                          icon: const Icon(AppIcons.back, size: 14),
                           label: const Text('Receive Stock'),
                         ),
                       ],
