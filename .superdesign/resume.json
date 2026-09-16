@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "existing-ui",
+      "projectId": "a6eaa51b-180a-4de5-aeb6-f52c9482aec5",
+      "activeDraftId": "de45df0e-5efc-4eeb-bf23-907304ae293e",
+      "designSystemPath": "lib/core/theme/tokens.dart",
+      "contextFiles": [
+        "lib/core/theme/tokens.dart",
+        "lib/core/theme/motion.dart",
+        "lib/core/theme/breakpoints.dart",
+        "lib/core/theme/app_theme.dart"
+      ],
+      "fingerprints": {},
+      "drafts": {
+        "de45df0e-5efc-4eeb-bf23-907304ae293e": {
+          "title": "InvTrack v2 - Warm Minimal (Enhanced Interactions)",
+          "visualDirection": "warm minimal enhanced interactions",
+          "currentVersion": 4
+        }
+      },
+      "updatedAt": "2026-09-16T12:20:00Z"
+    },
+    "/inventory/detail": {
+      "targetKind": "existing-ui",
+      "projectId": "a6eaa51b-180a-4de5-aeb6-f52c9482aec5",
+      "activeDraftId": "a1b2b5c4-4067-44a4-8370-3a6775fceb04",
+      "designSystemPath": "lib/core/theme/tokens.dart",
+      "contextFiles": [
+        "lib/features/inventory/presentation/item_detail_screen.dart"
+      ],
+      "fingerprints": {},
+      "drafts": {
+        "a1b2b5c4-4067-44a4-8370-3a6775fceb04": {
+          "title": "InvTrack v2 - Item Detail",
+          "visualDirection": "item detail hero timeline",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-16T12:20:00Z"
+    },
+    "/handovers/queue": {
+      "targetKind": "existing-ui",
+      "projectId": "a6eaa51b-180a-4de5-aeb6-f52c9482aec5",
+      "activeDraftId": "a8d80247-aa08-41b5-8464-906286c6c988",
+      "designSystemPath": "lib/core/theme/tokens.dart",
+      "contextFiles": [
+        "lib/features/handover_queue/presentation/handover_queue_screen.dart"
+      ],
+      "fingerprints": {},
+      "drafts": {
+        "a8d80247-aa08-41b5-8464-906286c6c988": {
+          "title": "InvTrack v2 - Handover Queue",
+          "visualDirection": "handover return queue overdue status",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-16T12:20:00Z"
+    },
+    "/settings": {
+      "targetKind": "existing-ui",
+      "projectId": "a6eaa51b-180a-4de5-aeb6-f52c9482aec5",
+      "activeDraftId": "b09b090a-5805-4402-aa59-42056dd015b4",
+      "designSystemPath": "lib/core/theme/tokens.dart",
+      "contextFiles": [
+        "lib/features/settings/presentation/settings_screen.dart"
+      ],
+      "fingerprints": {},
+      "drafts": {
+        "b09b090a-5805-4402-aa59-42056dd015b4": {
+          "title": "InvTrack v2 - Settings",
+          "visualDirection": "settings profile preferences",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-16T12:20:00Z"
+    },
+    "/reports": {
+      "targetKind": "existing-ui",
+      "projectId": "a6eaa51b-180a-4de5-aeb6-f52c9482aec5",
+      "activeDraftId": "3300ab89-6eb4-44bd-b643-309e7de979db",
+      "designSystemPath": "lib/core/theme/tokens.dart",
+      "contextFiles": [
+        "lib/features/reports_analytics/presentation/reports_analytics_screen.dart"
+      ],
+      "fingerprints": {},
+      "drafts": {
+        "3300ab89-6eb4-44bd-b643-309e7de979db": {
+          "title": "InvTrack v2 - Reports & Analytics",
+          "visualDirection": "reports analytics insights trends",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-16T12:20:00Z"
+    },
+    "/scanning": {
+      "targetKind": "existing-ui",
+      "projectId": "a6eaa51b-180a-4de5-aeb6-f52c9482aec5",
+      "activeDraftId": "2abfe752-2591-4173-b370-c25e2374e603",
+      "designSystemPath": "lib/core/theme/tokens.dart",
+      "contextFiles": [
+        "lib/features/scanning/presentation/scanning_screen.dart"
+      ],
+      "fingerprints": {},
+      "drafts": {
+        "2abfe752-2591-4173-b370-c25e2374e603": {
+          "title": "InvTrack v2 - Advanced Scanning Flow",
+          "visualDirection": "advanced scanning live queue bulk mode",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-09-16T12:20:00Z"
+    }
+  }
+}

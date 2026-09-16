@@ -1,7 +1,7 @@
-name: myapp
-description: A new Flutter project.
+name: invtrack
+description: InvTrack - Commercial Grade Inventory & Asset Assignment Studio
 publish_to: 'none'
-version: 1.0.0+1
+version: 2.0.0+1
 environment:
   sdk: '>=3.0.0 <4.0.0'
 dependencies:
@@ -9,7 +9,6 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   go_router: ^14.1.1
-  provider: ^6.1.2
   google_fonts: ^6.3.3
   flutter_svg: ^2.0.10+1
   cached_network_image: ^3.4.1
@@ -26,10 +25,30 @@ dependencies:
   carousel_slider: ^4.2.1
   dotted_border: ^3.1.0
   path_provider: ^2.1.3
+  flutter_riverpod: any
+  riverpod_annotation: any
+  drift: any
+  drift_flutter: any
+  sqlite3_flutter_libs: any
+  mobile_scanner: any
+  barcode: any
+  qr_flutter: any
+  flutter_lucide: any
+  freezed_annotation: any
+  json_annotation: any
+  path: ^1.9.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
   flutter_lints: ^4.0.0
+  build_runner: any
+  riverpod_generator: any
+  drift_dev: any
+  freezed: any
+  json_serializable: any
+  mocktail: ^1.0.4
 flutter:
   uses-material-design: true
   assets:
